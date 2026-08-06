@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.BarChart
+import androidx.compose.material.icons.twotone.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,7 +49,31 @@ fun StatsScreen(
     val state by vm.state.collectAsState(initial = StatsViewModel.StatsState())
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Stats") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Stats") },
+                actions = {
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    androidx.compose.material3.IconButton(onClick = {
+                        val text = buildString {
+                            appendLine("✈️ My plane spotting stats")
+                            appendLine("Today: ${state.hitsToday} · Week: ${state.hitsThisWeek} · All time: ${state.totalHits}")
+                            appendLine("Unique aircraft: ${state.uniqueAircraft} · Streak: ${state.currentStreak}d (best ${state.bestStreak}d)")
+                            state.topAircraft.firstOrNull()?.let {
+                                appendLine("Most seen: ${it.aircraft?.registration ?: it.hex.uppercase()} (${it.sightings}×)")
+                            }
+                        }
+                        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(android.content.Intent.EXTRA_TEXT, text)
+                        }
+                        context.startActivity(android.content.Intent.createChooser(intent, null))
+                    }) {
+                        Icon(Icons.TwoTone.Share, contentDescription = "Share stats")
+                    }
+                },
+            )
+        },
         bottomBar = { BottomNavBar(selectedTab = 4) },
     ) { padding ->
         LazyColumn(
