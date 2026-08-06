@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.BarChart
 import androidx.compose.material.icons.twotone.Map
-import androidx.compose.material.icons.twotone.SettingsInputAntenna
 import androidx.compose.material.icons.twotone.TravelExplore
 import androidx.compose.material.icons.twotone.Visibility
 import androidx.compose.ui.res.stringResource
@@ -24,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import eu.darken.apl.R
 import eu.darken.apl.common.navigation.LocalNavigationController
-import eu.darken.apl.feeder.ui.DestinationFeederList
 import eu.darken.apl.map.ui.DestinationMap
 import eu.darken.apl.search.ui.DestinationSearch
 import eu.darken.apl.stats.ui.DestinationStats
@@ -74,13 +72,7 @@ fun BottomNavBar(
             )
             NavigationBarItem(
                 selected = selectedTab == 3,
-                onClick = { if (selectedTab != 3) navController.replace(DestinationFeederList) },
-                icon = { Icon(Icons.TwoTone.SettingsInputAntenna, contentDescription = null) },
-                label = { Text(stringResource(R.string.feeder_page_label)) },
-            )
-            NavigationBarItem(
-                selected = selectedTab == 4,
-                onClick = { if (selectedTab != 4) navController.replace(DestinationStats) },
+                onClick = { if (selectedTab != 3) navController.replace(DestinationStats) },
                 icon = { Icon(Icons.TwoTone.BarChart, contentDescription = null) },
                 label = { Text("Stats") },
             )

@@ -74,7 +74,7 @@ fun StatsScreen(
                 },
             )
         },
-        bottomBar = { BottomNavBar(selectedTab = 4) },
+        bottomBar = { BottomNavBar(selectedTab = 3) },
     ) { padding ->
         LazyColumn(
             modifier = Modifier

@@ -159,7 +159,7 @@ fun SearchScreenHost(
             onPositionHome = vm::searchPositionHome,
             onSettings = { vm.navTo(eu.darken.apl.main.ui.settings.DestinationSettingsIndex) },
             onAircraftClick = { ac -> vm.openAircraftAction(ac.hex) },
-            onThumbnailClick = { meta -> vm.openThumbnail(meta.link) },
+            onThumbnailClick = { meta -> vm.openThumbnail(meta) },
             onWatchClick = { watch -> vm.openWatch(watch) },
             onShowOnMap = { aircraft -> vm.showOnMap(aircraft) },
             onGrantLocation = vm::requestLocationPermission,

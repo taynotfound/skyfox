@@ -62,6 +62,7 @@ fun SettingsIndexScreenHost(
         onMapSettings = { vm.goMapSettings() },
         onWatchSettings = { vm.goWatchSettings() },
         onFeederSettings = { vm.goFeederSettings() },
+        onFeederList = { vm.goFeederList() },
         onBackupRestore = { vm.goBackupRestore() },
         onSponsor = { vm.goSponsor() },
         onForkRepo = { vm.goForkRepo() },
@@ -82,6 +83,7 @@ fun SettingsIndexScreen(
     onMapSettings: () -> Unit,
     onWatchSettings: () -> Unit,
     onFeederSettings: () -> Unit,
+    onFeederList: () -> Unit = {},
     onBackupRestore: () -> Unit,
     onSponsor: () -> Unit,
     onForkRepo: () -> Unit = {},
@@ -131,6 +133,14 @@ fun SettingsIndexScreen(
                     summary = stringResource(R.string.watch_settings_summary),
                     icon = Icons.TwoTone.Notifications,
                     onClick = onWatchSettings,
+                )
+            }
+            item {
+                SettingsPreferenceItem(
+                    title = "Feeders",
+                    summary = "View your ADS-B feeders (moved here from the main tabs)",
+                    icon = Icons.TwoTone.CellTower,
+                    onClick = onFeederList,
                 )
             }
             item {

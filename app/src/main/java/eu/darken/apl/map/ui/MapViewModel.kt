@@ -266,6 +266,10 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    fun openGallery(hex: String) {
+        navTo(eu.darken.apl.gallery.ui.DestinationGallery(hex = hex))
+    }
+
     fun onOpenUrl(url: String) {
         log(tag) { "onOpenUrl($url)" }
         webpageTool.open(url)

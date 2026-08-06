@@ -38,6 +38,8 @@ class SettingsIndexViewModel @Inject constructor(
 
     fun goFeederSettings() = navTo(DestinationFeederSettings)
 
+    fun goFeederList() = navTo(eu.darken.apl.feeder.ui.DestinationFeederList)
+
     fun goForkRepo() {
         webpageTool.open("https://github.com/taynotfound/prettier-airplanes-live")
     }

@@ -50,6 +50,9 @@ fun SearchActionSheetHost(
                 aircraft = currentState.aircraft,
                 route = currentState.route,
                 distanceInMeter = currentState.distanceInMeter,
+                onThumbnailClick = { meta ->
+                    vm.navTo(eu.darken.apl.gallery.ui.DestinationGallery(hex = meta.hex))
+                },
             )
 
             Spacer(Modifier.height(16.dp))

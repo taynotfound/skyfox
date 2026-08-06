@@ -91,7 +91,7 @@ fun WatchDetailsSheetHost(
             onShowOnMap = vm::showOnMap,
             onRemove = { vm.removeAlert() },
             onThumbnailClick = { meta ->
-                // Open planespotters link via webpageTool if available
+                vm.navTo(eu.darken.apl.gallery.ui.DestinationGallery(hex = meta.hex))
             },
             onLocationChanged = vm::updateLocation,
         )

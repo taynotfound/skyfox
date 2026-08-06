@@ -7,7 +7,7 @@ import java.io.FileInputStream
 import java.util.Properties
 
 object ProjectConfig {
-    const val packageName = "eu.darken.apl"
+    const val packageName = "de.taymaerz.skyfox"
 
     const val minSdk = 26
     const val compileSdk = 36

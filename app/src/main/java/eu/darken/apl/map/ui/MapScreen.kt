@@ -398,7 +398,7 @@ fun MapScreenHost(
                             },
                             onShowInSearch = vm::showInSearch,
                             onAddWatch = vm::addWatch,
-                            onThumbnailClick = vm::onOpenUrl,
+                            onThumbnailClick = { hex -> vm.openGallery(hex) },
                             modifier = if (sheetState.currentValue == SheetValue.Expanded) cutoutSafe else Modifier,
                         )
                     }
@@ -619,7 +619,7 @@ private fun AircraftDetailsSheetContent(
     onCopyLink: (String) -> Unit,
     onShowInSearch: (String) -> Unit,
     onAddWatch: (String) -> Unit,
-    onThumbnailClick: (String) -> Unit,
+    onThumbnailClick: (String) -> Unit, // hex
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -757,7 +757,7 @@ private fun AircraftDetailsSheetContent(
                         registration = details.registration,
                         large = true,
                     ),
-                    onImageClick = { meta -> onThumbnailClick(meta.link) },
+                    onImageClick = { meta -> onThumbnailClick(meta.hex) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),

@@ -302,8 +302,8 @@ class SearchViewModel @Inject constructor(
         navTo(DestinationSearchAction(hex = hex))
     }
 
-    fun openThumbnail(link: String) = launch {
-        webpageTool.open(link)
+    fun openThumbnail(meta: eu.darken.apl.common.planespotters.PlanespottersMeta) {
+        navTo(eu.darken.apl.gallery.ui.DestinationGallery(hex = meta.hex))
     }
 
     fun openWatch(watch: Watch) {

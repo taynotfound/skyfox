@@ -207,8 +207,8 @@ class WatchListViewModel @Inject constructor(
         navTo(DestinationWatchDetails(watchId = watchId))
     }
 
-    fun openThumbnail(meta: PlanespottersMeta) = launch {
-        webpageTool.open(meta.link)
+    fun openThumbnail(meta: PlanespottersMeta) {
+        navTo(eu.darken.apl.gallery.ui.DestinationGallery(hex = meta.hex))
     }
 
     fun showAircraftDetails(aircraft: Aircraft) {

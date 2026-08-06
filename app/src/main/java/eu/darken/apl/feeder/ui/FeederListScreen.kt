@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Check
 import androidx.compose.material.icons.twotone.Close
@@ -55,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import eu.darken.apl.R
 import eu.darken.apl.common.chart.Sparkline
-import eu.darken.apl.common.compose.BottomNavBar
 import eu.darken.apl.common.compose.LoadingBox
 import eu.darken.apl.common.compose.Preview2
 import eu.darken.apl.common.compose.PreviewWrapper
@@ -78,6 +78,7 @@ fun FeederListScreenHost(
     state?.let {
         FeederListScreen(
             state = it,
+            onBack = { vm.navUp() },
             onRefresh = vm::refresh,
             onAddFeeder = vm::goToAddFeeder,
             onSettings = { vm.navTo(eu.darken.apl.main.ui.settings.DestinationSettingsIndex) },
@@ -94,6 +95,7 @@ fun FeederListScreenHost(
 @Composable
 fun FeederListScreen(
     state: FeederListViewModel.State,
+    onBack: () -> Unit = {},
     onRefresh: () -> Unit,
     onAddFeeder: () -> Unit,
     onSettings: () -> Unit,
@@ -106,7 +108,7 @@ fun FeederListScreen(
     val isSelectionMode = selectedIds.isNotEmpty()
 
     Scaffold(
-        contentWindowInsets = aplContentWindowInsets(hasBottomNav = true),
+        contentWindowInsets = aplContentWindowInsets(),
         topBar = {
             if (isSelectionMode) {
                 TopAppBar(
@@ -127,6 +129,11 @@ fun FeederListScreen(
                 )
             } else {
                 TopAppBar(
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.AutoMirrored.TwoTone.ArrowBack, contentDescription = null)
+                        }
+                    },
                     title = {
                         Column {
                             Text(stringResource(R.string.feeder_page_label))
@@ -147,7 +154,7 @@ fun FeederListScreen(
                 )
             }
         },
-        bottomBar = { BottomNavBar(selectedTab = 3) },
+        
     ) { contentPadding ->
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
