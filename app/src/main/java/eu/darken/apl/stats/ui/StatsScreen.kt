@@ -1,5 +1,6 @@
 package eu.darken.apl.stats.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,12 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.BarChart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,20 +31,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import eu.darken.apl.common.chart.MetricLineChart
 import eu.darken.apl.common.compose.BottomNavBar
+import eu.darken.apl.common.navigation.NavigationEventHandler
+import eu.darken.apl.common.error.ErrorEventHandler
+import eu.darken.apl.common.planespotters.PlanespottersThumbnail
+import eu.darken.apl.common.planespotters.coil.AircraftThumbnailQuery
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatsScreen(
     vm: StatsViewModel = hiltViewModel(),
 ) {
+    NavigationEventHandler(vm)
+    ErrorEventHandler(vm)
     val state by vm.state.collectAsState(initial = StatsViewModel.StatsState())
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Stats") },
-            )
-        },
+        topBar = { TopAppBar(title = { Text("Stats") }) },
         bottomBar = { BottomNavBar(selectedTab = 4) },
     ) { padding ->
         LazyColumn(
@@ -56,13 +64,62 @@ fun StatsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    StatCard("Total Hits", state.totalHits, Modifier.weight(1f))
-                    StatCard("Today", state.hitsToday, Modifier.weight(1f))
-                    StatCard("This Week", state.hitsThisWeek, Modifier.weight(1f))
+                    StatCard("Today", state.hitsToday.toString(), Modifier.weight(1f))
+                    StatCard("This Week", state.hitsThisWeek.toString(), Modifier.weight(1f))
+                    StatCard("All Time", state.totalHits.toString(), Modifier.weight(1f))
+                }
+            }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    StatCard("Unique Aircraft", state.uniqueAircraft.toString(), Modifier.weight(1f))
+                    StatCard(
+                        "Streak",
+                        "${state.currentStreak}d",
+                        Modifier.weight(1f),
+                        sub = "best ${state.bestStreak}d",
+                    )
+                }
+            }
+            if (state.busiestHour != null || state.busiestDayName != null) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        state.busiestHour?.let {
+                            StatCard("Busiest Hour", "%02d:00".format(it), Modifier.weight(1f))
+                        }
+                        state.busiestDayName?.let {
+                            StatCard("Busiest Day", it, Modifier.weight(1f))
+                        }
+                    }
                 }
             }
 
-            if (state.topHexes.isNotEmpty()) {
+            if (state.activity.any { it.value > 0 }) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        ),
+                    ) {
+                        MetricLineChart(
+                            title = "Sightings — last 14 days",
+                            data = state.activity,
+                            lineColor = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                        )
+                    }
+                }
+            }
+
+            if (state.topAircraft.isNotEmpty()) {
                 item {
                     Text(
                         "Most Seen Aircraft",
@@ -70,9 +127,11 @@ fun StatsScreen(
                         modifier = Modifier.padding(top = 8.dp),
                     )
                 }
-                items(state.topHexes) { row ->
+                items(state.topAircraft, key = { it.hex }) { top ->
                     Card(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { vm.showAircraft(top.hex) },
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         ),
@@ -80,18 +139,35 @@ fun StatsScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                                .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(
-                                row.hex.uppercase(),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Medium,
+                            PlanespottersThumbnail(
+                                query = AircraftThumbnailQuery(
+                                    hex = top.hex,
+                                    registration = top.aircraft?.registration,
+                                ),
+                                modifier = Modifier.width(96.dp),
                             )
+                            Spacer(Modifier.width(12.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    top.aircraft?.registration ?: top.hex.uppercase(),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                                val desc = top.aircraft?.description
+                                    ?: top.aircraft?.operator
+                                    ?: "Hex ${top.hex.uppercase()}"
+                                Text(
+                                    desc,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                             Text(
-                                "${row.sightings}×",
-                                style = MaterialTheme.typography.bodyMedium,
+                                "${top.sightings}×",
+                                style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.primary,
                             )
                         }
@@ -109,6 +185,7 @@ fun StatsScreen(
                             Icons.TwoTone.BarChart,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(48.dp),
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
@@ -119,12 +196,13 @@ fun StatsScreen(
                     }
                 }
             }
+            item { Spacer(Modifier.height(8.dp)) }
         }
     }
 }
 
 @Composable
-private fun StatCard(label: String, value: Int, modifier: Modifier = Modifier) {
+private fun StatCard(label: String, value: String, modifier: Modifier = Modifier, sub: String? = null) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -132,11 +210,13 @@ private fun StatCard(label: String, value: Int, modifier: Modifier = Modifier) {
         ),
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                value.toString(),
+                value,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -146,6 +226,13 @@ private fun StatCard(label: String, value: Int, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
+            if (sub != null) {
+                Text(
+                    sub,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                )
+            }
         }
     }
 }
