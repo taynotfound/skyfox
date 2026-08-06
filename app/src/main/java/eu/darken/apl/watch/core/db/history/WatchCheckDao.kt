@@ -52,4 +52,28 @@ interface WatchCheckDao {
 
     @Query("DELETE FROM watch_checks WHERE checked_at < :before")
     suspend fun deleteBefore(before: Instant): Int
+
+    data class TopHexRow(
+        @ColumnInfo(name = "hex") val hex: String,
+        @ColumnInfo(name = "sightings") val sightings: Int,
+    )
+
+    // ponytail: SQLite json_each trick to split CSV hex list — works for small sets, rebuild as proper FK table if volumes grow
+    @Query("""
+        SELECT hex, COUNT(*) as sightings
+        FROM (
+            SELECT TRIM(value) as hex
+            FROM watch_checks, json_each('["' || REPLACE(REPLACE(COALESCE(seen_hexes,''), ',', '","'), ' ', '') || '"]')
+            WHERE seen_hexes IS NOT NULL AND seen_hexes != ''
+        )
+        WHERE hex != ''
+        GROUP BY hex ORDER BY sightings DESC LIMIT :limit
+    """)
+    suspend fun getTopHexes(limit: Int = 10): List<TopHexRow>
+
+    @Query("SELECT COUNT(*) FROM watch_checks WHERE aircraft_count > 0")
+    suspend fun totalHits(): Int
+
+    @Query("SELECT COALESCE(SUM(CASE WHEN aircraft_count > 0 THEN 1 ELSE 0 END), 0) FROM watch_checks WHERE checked_at >= :since")
+    suspend fun hitsInPeriod(since: Instant): Int
 }

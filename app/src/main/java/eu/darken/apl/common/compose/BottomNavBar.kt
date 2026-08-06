@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.BarChart
 import androidx.compose.material.icons.twotone.Map
 import androidx.compose.material.icons.twotone.SettingsInputAntenna
 import androidx.compose.material.icons.twotone.TravelExplore
@@ -26,6 +27,7 @@ import eu.darken.apl.common.navigation.LocalNavigationController
 import eu.darken.apl.feeder.ui.DestinationFeederList
 import eu.darken.apl.map.ui.DestinationMap
 import eu.darken.apl.search.ui.DestinationSearch
+import eu.darken.apl.stats.ui.DestinationStats
 import eu.darken.apl.watch.ui.DestinationWatchList
 
 val LocalIsInternetAvailable = staticCompositionLocalOf { true }
@@ -75,6 +77,12 @@ fun BottomNavBar(
                 onClick = { if (selectedTab != 3) navController.replace(DestinationFeederList) },
                 icon = { Icon(Icons.TwoTone.SettingsInputAntenna, contentDescription = null) },
                 label = { Text(stringResource(R.string.feeder_page_label)) },
+            )
+            NavigationBarItem(
+                selected = selectedTab == 4,
+                onClick = { if (selectedTab != 4) navController.replace(DestinationStats) },
+                icon = { Icon(Icons.TwoTone.BarChart, contentDescription = null) },
+                label = { Text("Stats") },
             )
         }
     }
