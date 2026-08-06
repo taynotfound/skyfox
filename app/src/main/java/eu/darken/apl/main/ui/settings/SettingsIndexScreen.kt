@@ -21,6 +21,7 @@ import androidx.compose.material.icons.twotone.NewReleases
 import androidx.compose.material.icons.twotone.Notifications
 import androidx.compose.material.icons.twotone.PrivacyTip
 import androidx.compose.material.icons.twotone.SettingsBackupRestore
+import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material.icons.twotone.Tune
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,6 +64,8 @@ fun SettingsIndexScreenHost(
         onFeederSettings = { vm.goFeederSettings() },
         onBackupRestore = { vm.goBackupRestore() },
         onSponsor = { vm.goSponsor() },
+        onForkRepo = { vm.goForkRepo() },
+        onUpstreamRepo = { vm.goUpstreamRepo() },
         onChangelog = { vm.goChangelog() },
         onUpdate = { vm.openUpdate(it) },
         onSupport = { vm.goSupport() },
@@ -81,6 +84,8 @@ fun SettingsIndexScreen(
     onFeederSettings: () -> Unit,
     onBackupRestore: () -> Unit,
     onSponsor: () -> Unit,
+    onForkRepo: () -> Unit = {},
+    onUpstreamRepo: () -> Unit = {},
     onChangelog: () -> Unit,
     onUpdate: (GithubApi.ReleaseInfo) -> Unit = {},
     onSupport: () -> Unit,
@@ -150,10 +155,10 @@ fun SettingsIndexScreen(
 
             item {
                 SettingsPreferenceItem(
-                    title = stringResource(R.string.common_sponsor_action),
-                    summary = stringResource(R.string.common_sponsor_description),
-                    icon = Icons.TwoTone.Favorite,
-                    onClick = onSponsor,
+                    title = stringResource(R.string.settings_fork_repo_label),
+                    summary = stringResource(R.string.settings_fork_repo_desc),
+                    icon = Icons.TwoTone.Star,
+                    onClick = onForkRepo,
                 )
             }
             item {
@@ -195,6 +200,25 @@ fun SettingsIndexScreen(
                     summary = stringResource(R.string.settings_privacy_policy_desc),
                     icon = Icons.TwoTone.PrivacyTip,
                     onClick = onPrivacyPolicy,
+                )
+            }
+
+            item { SettingsCategoryHeader(title = stringResource(R.string.settings_category_upstream_label)) }
+
+            item {
+                SettingsPreferenceItem(
+                    title = stringResource(R.string.settings_upstream_repo_label),
+                    summary = stringResource(R.string.settings_upstream_repo_desc),
+                    icon = Icons.TwoTone.Groups,
+                    onClick = onUpstreamRepo,
+                )
+            }
+            item {
+                SettingsPreferenceItem(
+                    title = stringResource(R.string.common_sponsor_action),
+                    summary = stringResource(R.string.common_sponsor_description),
+                    icon = Icons.TwoTone.Favorite,
+                    onClick = onSponsor,
                 )
             }
         }

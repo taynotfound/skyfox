@@ -38,6 +38,14 @@ class SettingsIndexViewModel @Inject constructor(
 
     fun goFeederSettings() = navTo(DestinationFeederSettings)
 
+    fun goForkRepo() {
+        webpageTool.open("https://github.com/taynotfound/prettier-airplanes-live")
+    }
+
+    fun goUpstreamRepo() {
+        webpageTool.open("https://github.com/d4rken-org/airplanes-live-app")
+    }
+
     fun goSponsor() = launch {
         log(tag) { "goSponsor()" }
         sponsorHelper.openSponsorPage()
