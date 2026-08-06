@@ -45,7 +45,7 @@ class SettingsIndexViewModel @Inject constructor(
 
     fun goChangelog() {
         log(tag) { "goChangelog()" }
-        webpageTool.open("https://github.com/d4rken-org/airplanes-live-app/releases/latest")
+        webpageTool.open("https://github.com/taynotfound/prettier-airplanes-live/releases/latest")
     }
 
     fun openUpdate(release: GithubApi.ReleaseInfo) {

@@ -26,11 +26,11 @@ class SupportViewModel @Inject constructor(
     val isRecording = recorderModule.state.map { it.isRecording }.asStateFlow()
 
     fun openDocumentation() {
-        webpageTool.open("https://github.com/d4rken-org/airplanes-live-app/wiki")
+        webpageTool.open("https://github.com/taynotfound/prettier-airplanes-live")
     }
 
     fun openIssueTracker() {
-        webpageTool.open("https://github.com/d4rken-org/airplanes-live-app/issues")
+        webpageTool.open("https://github.com/taynotfound/prettier-airplanes-live/issues")
     }
 
     fun openAirplanesLiveDiscord() {

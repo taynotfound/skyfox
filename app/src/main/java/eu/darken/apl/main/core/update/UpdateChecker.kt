@@ -62,8 +62,8 @@ class UpdateChecker @Inject constructor(
     }
 
     companion object {
-        private const val GITHUB_OWNER = "d4rken-org"
-        private const val GITHUB_REPO = "airplanes-live-app"
+        private const val GITHUB_OWNER = "taynotfound"
+        private const val GITHUB_REPO = "prettier-airplanes-live"
         private val TAG = logTag("Update", "Checker")
     }
 }
