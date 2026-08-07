@@ -33,7 +33,7 @@ class GeneralSettings @Inject constructor(
 
     val themeMode = context.dataStore.createJsonValue("core.ui.theme.mode", ThemeMode.SYSTEM, json, onErrorFallbackToDefault = true)
     val themeStyle = context.dataStore.createJsonValue("core.ui.theme.style", ThemeStyle.DEFAULT, json, onErrorFallbackToDefault = true)
-    val themeColor = context.dataStore.createJsonValue("core.ui.theme.color", ThemeColor.BLUE, json, onErrorFallbackToDefault = true)
+    val themeColor = context.dataStore.createJsonValue("core.ui.theme.color", ThemeColor.FOX, json, onErrorFallbackToDefault = true)
 
     val airplanesLiveApiKey = context.dataStore.createValue<String?>("core.airplaneslive.api.key", null)
     val apiKeyValid = MutableStateFlow<Boolean?>(null)
