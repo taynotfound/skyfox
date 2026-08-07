@@ -37,10 +37,6 @@ class SupportViewModel @Inject constructor(
         webpageTool.open("https://discord.gg/adsb")
     }
 
-    fun openDarkensDiscord() {
-        webpageTool.open("https://discord.gg/ENtVkMHqZg")
-    }
-
     fun openPrivacyPolicy() {
         webpageTool.open(PrivacyPolicy.URL)
     }

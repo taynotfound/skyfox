@@ -48,6 +48,10 @@ class SettingsIndexViewModel @Inject constructor(
         webpageTool.open("https://github.com/d4rken-org/airplanes-live-app")
     }
 
+    fun goUpstreamDiscord() {
+        webpageTool.open("https://discord.gg/ENtVkMHqZg")
+    }
+
     fun goSponsor() = launch {
         log(tag) { "goSponsor()" }
         sponsorHelper.openSponsorPage()

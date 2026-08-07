@@ -28,7 +28,7 @@
 
     <string name="common_unavailable_label">N/A</string>
     <string name="common_sponsor_action">Sponsor development</string>
-    <string name="common_sponsor_description">Support d4rken, the original developer.</string>
+    <string name="common_sponsor_description">Sponsor d4rken on GitHub — he built the app this fork is based on.</string>
 
     <string name="common_last_seen_label">Last seen</string>
     <string name="common_registration_label">Registration</string>
@@ -64,9 +64,11 @@
     <string name="settings_licenses_label">Licenses</string>
     <string name="general_thank_you_label">Thank you</string>
     <string name="settings_category_other_label">Other</string>
-    <string name="settings_category_upstream_label">Original project</string>
+    <string name="settings_category_upstream_label">Original developer</string>
     <string name="settings_upstream_repo_label">Upstream: airplanes.live app</string>
-    <string name="settings_upstream_repo_desc">By d4rken — this app is a fork of his work.</string>
+    <string name="settings_upstream_repo_desc">By d4rken — SkyFox is a fork of his work (GPL-3.0).</string>
+    <string name="settings_upstream_discord_label">darken\'s Discord</string>
+    <string name="settings_upstream_discord_desc">Community of the original developer</string>
     <string name="settings_fork_repo_label">This fork</string>
     <string name="settings_fork_repo_desc">prettier-airplanes-live by Tay März</string>
 
@@ -123,7 +125,6 @@
     <string name="discord_label">Discord</string>
     <string name="discord_description">A place to hang out in and ask questions.</string>
     <string name="support_airplanes_live_discord_desc">The official airplanes.live Discord</string>
-    <string name="support_darkens_discord_desc">The app developers own Discord community</string>
     <string name="issue_tracker_label">Issue tracker</string>
     <string name="issue_tracker_description">A public issue tracker for bug reports and feature requests.</string>
 

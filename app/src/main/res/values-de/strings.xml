@@ -117,7 +117,6 @@
     <string name="discord_label">Discord</string>
     <string name="discord_description">Ein Ort zum Abhängen und Fragen stellen.</string>
     <string name="support_airplanes_live_discord_desc">Der offizielle airplanes.live Discord</string>
-    <string name="support_darkens_discord_desc">Die eigene Discord-Community des App-Entwicklers</string>
     <string name="issue_tracker_label">Issue-Tracker</string>
     <string name="issue_tracker_description">Ein öffentlicher Issue-Tracker für Fehlerberichte und Funktionsanfragen.</string>
 

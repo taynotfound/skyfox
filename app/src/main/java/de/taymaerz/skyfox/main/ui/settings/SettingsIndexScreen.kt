@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import de.taymaerz.skyfox.R
@@ -67,6 +68,7 @@ fun SettingsIndexScreenHost(
         onSponsor = { vm.goSponsor() },
         onForkRepo = { vm.goForkRepo() },
         onUpstreamRepo = { vm.goUpstreamRepo() },
+        onUpstreamDiscord = { vm.goUpstreamDiscord() },
         onChangelog = { vm.goChangelog() },
         onUpdate = { vm.openUpdate(it) },
         onSupport = { vm.goSupport() },
@@ -88,6 +90,7 @@ fun SettingsIndexScreen(
     onSponsor: () -> Unit,
     onForkRepo: () -> Unit = {},
     onUpstreamRepo: () -> Unit = {},
+    onUpstreamDiscord: () -> Unit = {},
     onChangelog: () -> Unit,
     onUpdate: (GithubApi.ReleaseInfo) -> Unit = {},
     onSupport: () -> Unit,
@@ -229,6 +232,14 @@ fun SettingsIndexScreen(
                     summary = stringResource(R.string.common_sponsor_description),
                     icon = Icons.TwoTone.Favorite,
                     onClick = onSponsor,
+                )
+            }
+            item {
+                SettingsPreferenceItem(
+                    title = stringResource(R.string.settings_upstream_discord_label),
+                    summary = stringResource(R.string.settings_upstream_discord_desc),
+                    painter = painterResource(R.drawable.ic_discord_24),
+                    onClick = onUpstreamDiscord,
                 )
             }
         }

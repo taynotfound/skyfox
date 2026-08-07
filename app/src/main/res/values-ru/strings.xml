@@ -117,7 +117,6 @@
     <string name="discord_label">Discord</string>
     <string name="discord_description">Место для общения и вопросов.</string>
     <string name="support_airplanes_live_discord_desc">Официальный Discord airplanes.live</string>
-    <string name="support_darkens_discord_desc">Собственное Discord-сообщество разработчика приложения</string>
     <string name="issue_tracker_label">Трекер проблем</string>
     <string name="issue_tracker_description">Публичный трекер проблем для сообщений об ошибках и запросов функций.</string>
 

@@ -45,7 +45,6 @@ fun SupportScreenHost(
         onDocumentation = { vm.openDocumentation() },
         onIssueTracker = { vm.openIssueTracker() },
         onAirplanesLiveDiscord = { vm.openAirplanesLiveDiscord() },
-        onDarkensDiscord = { vm.openDarkensDiscord() },
         onStartDebugLog = { vm.startDebugLog() },
         onStopDebugLog = { vm.stopDebugLog() },
         onPrivacyPolicy = { vm.openPrivacyPolicy() },
@@ -59,7 +58,6 @@ fun SupportScreen(
     onDocumentation: () -> Unit,
     onIssueTracker: () -> Unit,
     onAirplanesLiveDiscord: () -> Unit,
-    onDarkensDiscord: () -> Unit,
     onStartDebugLog: () -> Unit,
     onStopDebugLog: () -> Unit,
     onPrivacyPolicy: () -> Unit,
@@ -104,14 +102,6 @@ fun SupportScreen(
                     summary = stringResource(R.string.support_airplanes_live_discord_desc),
                     painter = painterResource(R.drawable.ic_discord_24),
                     onClick = onAirplanesLiveDiscord,
-                )
-            }
-            item {
-                SettingsPreferenceItem(
-                    title = "darken's Discord",
-                    summary = stringResource(R.string.support_darkens_discord_desc),
-                    painter = painterResource(R.drawable.ic_discord_24),
-                    onClick = onDarkensDiscord,
                 )
             }
 
