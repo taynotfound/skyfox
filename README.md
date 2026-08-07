@@ -1,29 +1,31 @@
-<img src="https://raw.githubusercontent.com/d4rken-org/airplanes-live-app/main/app/src/main/ic_launcher-playstore.png" width="128">
+<img src="app/src/main/ic_launcher-playstore.png" width="128">
 
-# prettier-airplanes-live
+# SkyFox 🦊✈️
 
-> Fork of [d4rken-org/airplanes-live-app](https://github.com/d4rken-org/airplanes-live-app) by **Tay März** ([@taynotfound](https://github.com/taynotfound)) — prettier, with more features.
+> Live flight tracking for [airplanes.live](https://airplanes.live) — by **Tay März** ([@taynotfound](https://github.com/taynotfound)). Based on [d4rken-org/airplanes-live-app](https://github.com/d4rken-org/airplanes-live-app).
 
-An Android app for https://airplanes.live
-
-## What's different in this fork
+## What's new in SkyFox
 
 * **Stats screen** — spotting streaks, busiest hour/day, unique aircraft, 14-day activity chart, top 10 most-seen aircraft with photos, shareable summary
+* **Map layer switcher** — change the OpenStreetMap base layer right from the map or in settings
+* **Start location** — set a home location the map opens on
+* **Richer route info** — airline names and origin/destination cities on aircraft details
+* **Smoother aircraft popups** — reworked map hooks for less lag
 * More coming.
 
-## Upstream features
+## Core features
 
 * View aircraft on map
 * Search for aircraft by HEX, callsign, registration, airframe or SQUAWK code
 * Flight route information with origin and destination airports
 * ICAO / callsign / SQUAWK / location alerts
 * Feeder monitoring with offline notifications
-* Watchlist backup and restore
+* Aircraft photos via planespotters.net
 
-## Building
+## Installation
 
-APKs are built by GitHub Actions on every push (`Build APK` workflow → artifact). Locally: `./gradlew assembleFossDebug`.
+Grab the latest APK from [Releases](https://github.com/taynotfound/skyfox/releases). Every push to `main` also builds an APK artifact via GitHub Actions.
 
-## License
+## Credits
 
-Same as upstream — see [LICENSE](LICENSE). All upstream credit to [d4rken](https://github.com/d4rken) and contributors.
+SkyFox is based on the excellent [airplanes.live app](https://github.com/d4rken-org/airplanes-live-app) by [d4rken](https://github.com/d4rken). License terms of the original project apply — see [LICENSE](LICENSE).

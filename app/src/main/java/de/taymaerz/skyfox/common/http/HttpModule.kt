@@ -57,7 +57,7 @@ class HttpModule {
     @Provides
     fun userAgent(): String =
         "${BuildConfigWrap.APPLICATION_ID}/${BuildConfigWrap.VERSION_NAME} " +
-            "(Android ${Build.VERSION.RELEASE}; ${Build.MODEL}; +https://github.com/taynotfound/prettier-airplanes-live)"
+            "(Android ${Build.VERSION.RELEASE}; ${Build.MODEL}; +https://github.com/taynotfound/skyfox)"
 
     @Singleton
     @Provides

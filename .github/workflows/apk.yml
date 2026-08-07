@@ -25,5 +25,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: prettier-airplanes-live-apk
+          name: skyfox-apk
           path: app/build/outputs/apk/foss/debug/*.apk

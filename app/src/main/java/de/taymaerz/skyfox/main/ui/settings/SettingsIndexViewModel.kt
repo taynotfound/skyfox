@@ -41,7 +41,7 @@ class SettingsIndexViewModel @Inject constructor(
     fun goFeederList() = navTo(de.taymaerz.skyfox.feeder.ui.DestinationFeederList)
 
     fun goForkRepo() {
-        webpageTool.open("https://github.com/taynotfound/prettier-airplanes-live")
+        webpageTool.open("https://github.com/taynotfound/skyfox")
     }
 
     fun goUpstreamRepo() {
@@ -55,7 +55,7 @@ class SettingsIndexViewModel @Inject constructor(
 
     fun goChangelog() {
         log(tag) { "goChangelog()" }
-        webpageTool.open("https://github.com/taynotfound/prettier-airplanes-live/releases/latest")
+        webpageTool.open("https://github.com/taynotfound/skyfox/releases/latest")
     }
 
     fun openUpdate(release: GithubApi.ReleaseInfo) {
