@@ -220,5 +220,22 @@ private fun InfoGrid(aircraft: Aircraft, modifier: Modifier = Modifier) {
                 modifier = Modifier.weight(1f),
             )
         }
+        // Row 4: Track | Vertical rate — only when we have data
+        val track = aircraft.groundTrack ?: aircraft.trackheading?.toFloat()
+        val vRate = aircraft.altitudeRate
+        if (track != null || vRate != null) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                InfoCell(
+                    value = track?.let { "${it.toInt()}°" } ?: "?",
+                    label = stringResource(R.string.common_track_label),
+                    modifier = Modifier.weight(1f),
+                )
+                InfoCell(
+                    value = vRate?.let { "${if (it > 0) "+" else ""}$it ft/min" } ?: "?",
+                    label = stringResource(R.string.common_vertical_rate_label),
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
     }
 }

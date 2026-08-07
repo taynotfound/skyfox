@@ -221,6 +221,46 @@ fun StatsScreen(
                     }
                 }
             }
+            if (state.recentSightings.isNotEmpty()) {
+                item {
+                    Text(
+                        "Recent Sightings",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
+                items(state.recentSightings, key = { "${it.hex}-${it.at}" }) { s ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { vm.showAircraft(s.hex) }
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                s.aircraft?.registration ?: s.hex.uppercase(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                            )
+                            (s.aircraft?.description ?: s.aircraft?.operator)?.let {
+                                Text(
+                                    it,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                        Text(
+                            android.text.format.DateUtils.getRelativeTimeSpanString(
+                                s.at.toEpochMilli(),
+                            ).toString(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
             item { Spacer(Modifier.height(8.dp)) }
         }
     }

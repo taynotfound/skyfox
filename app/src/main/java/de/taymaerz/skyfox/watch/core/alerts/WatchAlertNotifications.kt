@@ -75,6 +75,13 @@ class WatchAlertNotifications @Inject constructor(
     private val Watch.notificationId: Int
         get() = NOTIFICATION_ID_RANGE + (id.hashCode().absoluteValue % 100)
 
+    // "D-ABYT (DLH400) · 36000 ft" — best identity we have, hex as fallback
+    private val Aircraft.alertLabel: String
+        get() = buildString {
+            append(registration ?: callsign?.trim() ?: "#${hex.uppercase()}")
+            callsign?.trim()?.takeIf { it.isNotEmpty() && registration != null }?.let { append(" ($it)") }
+            altitude?.let { append(" · $it ft") }
+        }
 
     suspend fun alert(watch: Watch, aircrafts: Collection<Aircraft>) {
         log(TAG) { "show(watch=$watch, aircraft=${aircrafts.size})" }
@@ -99,7 +106,7 @@ class WatchAlertNotifications @Inject constructor(
                     setContentTitle(context.getString(R.string.watch_notification_alert_aircraft_title))
                     val msgText = context.getString(
                         R.string.watch_notification_alert_aircraft_msg,
-                        aircraft.hex
+                        aircraft.alertLabel
                     )
                     setContentText(msgText)
                 }
@@ -108,7 +115,7 @@ class WatchAlertNotifications @Inject constructor(
                     setContentTitle(context.getString(R.string.watch_notification_alert_flight_title))
                     val msgText = context.getString(
                         R.string.watch_notification_alert_flight_msg,
-                        aircrafts.first().hex
+                        aircraft.alertLabel
                     )
                     setContentText(msgText)
                 }

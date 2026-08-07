@@ -536,6 +536,8 @@
     <string name="watchlist_note_label">Note</string>
     <string name="common_altitude_label">Altitude</string>
     <string name="common_speed_label">Speed</string>
+    <string name="common_track_label">Track</string>
+    <string name="common_vertical_rate_label">Vertical rate</string>
     <string name="aircraft_details_datasource_x">Source: %s</string>
     <string name="aircraft_details_operator_unknown">Unknown operator</string>
     <string name="aircraft_details_description_unknown">Unknown aircraft</string>

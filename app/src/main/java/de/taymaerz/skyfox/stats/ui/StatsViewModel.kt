@@ -34,6 +34,12 @@ class StatsViewModel @Inject constructor(
         val aircraft: Aircraft?,
     )
 
+    data class Sighting(
+        val hex: String,
+        val at: Instant,
+        val aircraft: Aircraft?,
+    )
+
     data class StatsState(
         val totalHits: Int = 0,
         val hitsToday: Int = 0,
@@ -44,6 +50,7 @@ class StatsViewModel @Inject constructor(
         val busiestHour: Int? = null,
         val busiestDayName: String? = null,
         val topAircraft: List<TopAircraft> = emptyList(),
+        val recentSightings: List<Sighting> = emptyList(),
         val activity: List<ChartPoint> = emptyList(),
     )
 
@@ -94,6 +101,16 @@ class StatsViewModel @Inject constructor(
         val busiestDay = hits.groupingBy { it.checkedAt.atZone(zone).dayOfWeek }
             .eachCount().maxByOrNull { it.value }?.key
 
+        // recent sightings log: newest hits, one row per hex per check
+        val recent = hits.sortedByDescending { it.checkedAt }
+            .flatMap { check ->
+                (check.seenHexes ?: "").split(",")
+                    .map { it.trim().lowercase() }.filter { it.isNotEmpty() }
+                    .map { hex -> Sighting(hex, check.checkedAt, aircraftMap[hex]) }
+            }
+            .distinctBy { it.hex to it.at.atZone(zone).toLocalDate() } // ponytail: dedupe per day, proper sighting sessions if needed
+            .take(25)
+
         // last 14 days activity for chart
         val since = now.minus(Duration.ofDays(14))
         val perDay = hits.filter { it.checkedAt >= since }
@@ -119,6 +136,7 @@ class StatsViewModel @Inject constructor(
             topAircraft = hexCounts.entries.sortedByDescending { it.value }.take(10).map {
                 TopAircraft(hex = it.key, sightings = it.value, aircraft = aircraftMap[it.key])
             },
+            recentSightings = recent,
             activity = activity,
         )
     }.asStateFlow()
