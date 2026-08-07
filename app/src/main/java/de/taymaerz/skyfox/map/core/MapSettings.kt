@@ -1,0 +1,32 @@
+package de.taymaerz.skyfox.map.core
+
+import android.content.Context
+import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
+import de.taymaerz.skyfox.common.datastore.createValue
+import de.taymaerz.skyfox.common.debug.logging.logTag
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
+import javax.inject.Singleton
+import de.taymaerz.skyfox.common.datastore.createValue as createJsonValue
+
+@Singleton
+class MapSettings @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+    private val json: Json,
+) {
+
+    private val Context.dataStore by preferencesDataStore(name = "settings_map")
+
+    val isRestoreLastViewEnabled = context.dataStore.createValue("map.restore.last.view.enabled", true)
+    val isNativeInfoPanelEnabled = context.dataStore.createValue("map.native.info.panel.enabled", true)
+    val isHoverInfoEnabled = context.dataStore.createValue("map.hover.info.enabled", false)
+    val lastCamera = context.dataStore.createJsonValue<SavedCamera?>("map.last.camera", null, json)
+    val homeLocation = context.dataStore.createJsonValue<SavedCamera?>("map.home.location", null, json)
+    val mapLayer = context.dataStore.createValue("map.layer", MapLayer.OSM.key)
+    val enabledOverlays = context.dataStore.createJsonValue<Set<String>?>("map.overlays.enabled", null, json, onErrorFallbackToDefault = true)
+
+    companion object {
+        internal val TAG = logTag("Map", "Settings")
+    }
+}

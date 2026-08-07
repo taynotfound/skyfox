@@ -14,7 +14,7 @@
 
 
     <application
-        android:name="eu.darken.apl.App"
+        android:name="de.taymaerz.skyfox.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="eu.darken.apl.main.ui.MainActivity"
+            android:name="de.taymaerz.skyfox.main.ui.MainActivity"
             android:launchMode="singleTop"
             android:exported="true"
             android:theme="@style/AppThemeSplash">
@@ -40,7 +40,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="eu_darken_apl"
+                    android:scheme="de_taymaerz_skyfox"
                     android:host="feeder" />
             </intent-filter>
         </activity>

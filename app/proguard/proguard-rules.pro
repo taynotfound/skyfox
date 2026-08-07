@@ -1,4 +1,4 @@
--keep class eu.darken.apl.BuildConfig { *; }
+-keep class de.taymaerz.skyfox.BuildConfig { *; }
 -dontobfuscate
 
 -dontwarn org.bouncycastle.jsse.BCSSLParameters

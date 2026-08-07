@@ -1,6 +1,6 @@
 package testhelper.coroutine
 
-import eu.darken.apl.common.coroutine.DispatcherProvider
+import de.taymaerz.skyfox.common.coroutine.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

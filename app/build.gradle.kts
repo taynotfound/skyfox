@@ -24,7 +24,7 @@ android {
         versionCode = ProjectConfig.Version.code
         versionName = ProjectConfig.Version.name
 
-        testInstrumentationRunner = "eu.darken.apl.HiltTestRunner"
+        testInstrumentationRunner = "de.taymaerz.skyfox.HiltTestRunner"
 
         buildConfigField("String", "PACKAGENAME", "\"${ProjectConfig.packageName}\"")
         buildConfigField("String", "VERSION_CODE", "\"${ProjectConfig.Version.code}\"")
@@ -147,7 +147,7 @@ android {
             assets.srcDirs(files("$projectDir/schemas"))
         }
     }
-    namespace = "eu.darken.apl"
+    namespace = "de.taymaerz.skyfox"
 
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")

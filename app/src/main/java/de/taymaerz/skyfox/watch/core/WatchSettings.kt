@@ -1,0 +1,32 @@
+package de.taymaerz.skyfox.watch.core
+
+// Import the specific createValue function from DataStoreValueJson
+import android.content.Context
+import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
+import de.taymaerz.skyfox.common.debug.logging.logTag
+import kotlinx.serialization.json.Json
+import java.time.Duration
+import javax.inject.Inject
+import javax.inject.Singleton
+import de.taymaerz.skyfox.common.datastore.createValue as createJsonValue
+
+@Singleton
+class WatchSettings @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+    json: Json,
+) {
+
+    private val Context.dataStore by preferencesDataStore(name = "settings_alerts")
+
+    val watchSortMode = context.dataStore.createJsonValue("watch.sort.mode", WatchSortMode.BY_NOTE, json, onErrorFallbackToDefault = true)
+
+    val watchMonitorInterval = context.dataStore.createJsonValue("watch.monitor.interval", DEFAULT_CHECK_INTERVAL, json)
+
+    val lastCleanup = context.dataStore.createJsonValue("watch.cleanup.last", java.time.Instant.EPOCH, json)
+
+    companion object {
+        val DEFAULT_CHECK_INTERVAL = Duration.ofMinutes(60)
+        internal val TAG = logTag("Watch", "Settings")
+    }
+}

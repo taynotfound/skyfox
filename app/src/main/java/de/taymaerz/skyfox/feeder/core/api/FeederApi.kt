@@ -1,0 +1,14 @@
+package de.taymaerz.skyfox.feeder.core.api
+
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+interface FeederApi {
+
+    @GET("feed")
+    suspend fun getFeeder(@Query("id", encoded = true) id: String): FeedInfos
+
+    @GET("feed-status")
+    suspend fun getFeedStatus(): FeedStatus
+
+}

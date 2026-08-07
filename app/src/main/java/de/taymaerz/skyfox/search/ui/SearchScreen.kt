@@ -1,0 +1,699 @@
+package de.taymaerz.skyfox.search.ui
+
+import android.Manifest
+import android.text.format.DateUtils
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Clear
+import androidx.compose.material.icons.twotone.Close
+import androidx.compose.material.icons.twotone.Map
+import androidx.compose.material.icons.twotone.MyLocation
+import androidx.compose.material.icons.twotone.NotificationsActive
+import androidx.compose.material.icons.twotone.Search
+import androidx.compose.material.icons.twotone.Settings
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import de.taymaerz.skyfox.R
+import de.taymaerz.skyfox.common.compose.BottomNavBar
+import de.taymaerz.skyfox.common.compose.InfoCell
+import de.taymaerz.skyfox.common.compose.LoadingBox
+import de.taymaerz.skyfox.common.compose.aplContentWindowInsets
+import de.taymaerz.skyfox.common.error.ErrorEventHandler
+import de.taymaerz.skyfox.common.navigation.NavigationEventHandler
+import de.taymaerz.skyfox.common.planespotters.PlanespottersThumbnail
+import de.taymaerz.skyfox.common.planespotters.coil.AircraftThumbnailQuery
+import de.taymaerz.skyfox.common.compose.Preview2
+import de.taymaerz.skyfox.common.compose.PreviewWrapper
+import de.taymaerz.skyfox.common.compose.preview.FakeAircraft
+import de.taymaerz.skyfox.main.core.aircraft.Aircraft
+import de.taymaerz.skyfox.main.core.aircraft.isEmergencySquawk
+import de.taymaerz.skyfox.main.core.aircraft.messageTypeLabel
+import de.taymaerz.skyfox.main.ui.settings.DestinationGeneralSettings
+import de.taymaerz.skyfox.watch.ui.preview.mockAircraftWatch
+import retrofit2.HttpException
+
+@Composable
+fun SearchScreenHost(
+    targetHexes: List<String>? = null,
+    targetSquawks: List<String>? = null,
+    targetCallsigns: List<String>? = null,
+    vm: SearchViewModel = hiltViewModel(),
+) {
+    NavigationEventHandler(vm)
+    ErrorEventHandler(vm)
+
+    LaunchedEffect(targetHexes, targetSquawks, targetCallsigns) {
+        vm.init(targetHexes, targetSquawks, targetCallsigns)
+    }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ -> }
+
+    LaunchedEffect(Unit) {
+        vm.events.collect { event ->
+            when (event) {
+                SearchEvents.RequestLocationPermission -> {
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+                }
+
+                is SearchEvents.SearchError -> {
+                    val isRateLimited = when {
+                        event.error is HttpException && event.error.code() == 429 -> true
+                        event.error.message?.contains("rate limit", ignoreCase = true) == true -> true
+                        else -> false
+                    }
+                    val errorDetail = when (event.error) {
+                        is HttpException -> "HTTP ${event.error.code()}"
+                        else -> event.error.message?.take(80) ?: event.error::class.simpleName ?: "Unknown"
+                    }
+                    val message = if (isRateLimited) {
+                        context.getString(R.string.search_error_rate_limited)
+                    } else {
+                        context.getString(R.string.search_error_generic, errorDetail)
+                    }
+                    val result = snackbarHostState.showSnackbar(
+                        message = message,
+                        actionLabel = if (isRateLimited) context.getString(R.string.apl_api_key_setting_label) else null,
+                        duration = if (isRateLimited) SnackbarDuration.Long else SnackbarDuration.Short,
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        vm.navTo(DestinationGeneralSettings)
+                    }
+                }
+            }
+        }
+    }
+
+    val state by vm.state.collectAsState(initial = null)
+
+    state?.let {
+        SearchScreen(
+            state = it,
+            snackbarHostState = snackbarHostState,
+            onSearchText = vm::updateSearchText,
+            onModeSelected = vm::updateMode,
+            onPositionHome = vm::searchPositionHome,
+            onSettings = { vm.navTo(de.taymaerz.skyfox.main.ui.settings.DestinationSettingsIndex) },
+            onAircraftClick = { ac -> vm.openAircraftAction(ac.hex) },
+            onThumbnailClick = { meta -> vm.openThumbnail(meta) },
+            onWatchClick = { watch -> vm.openWatch(watch) },
+            onShowOnMap = { aircraft -> vm.showOnMap(aircraft) },
+            onGrantLocation = vm::requestLocationPermission,
+            onDismissLocation = vm::dismissLocationPrompt,
+            onStartFeeding = vm::startFeeding,
+        )
+    } ?: Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        LoadingBox()
+    }
+}
+
+@Composable
+fun SearchScreen(
+    state: SearchViewModel.State,
+    snackbarHostState: SnackbarHostState,
+    onSearchText: (String) -> Unit,
+    onModeSelected: (SearchViewModel.State.Mode) -> Unit,
+    onPositionHome: () -> Unit,
+    onSettings: () -> Unit,
+    onAircraftClick: (Aircraft) -> Unit,
+    onThumbnailClick: (de.taymaerz.skyfox.common.planespotters.PlanespottersMeta) -> Unit,
+    onWatchClick: (de.taymaerz.skyfox.watch.core.types.Watch) -> Unit,
+    onShowOnMap: (Collection<Aircraft>) -> Unit,
+    onGrantLocation: () -> Unit,
+    onDismissLocation: () -> Unit,
+    onStartFeeding: () -> Unit,
+) {
+    var selectedHexes by remember { mutableStateOf(emptySet<String>()) }
+    val isSelectionMode = selectedHexes.isNotEmpty()
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var searchText by remember(state.input.raw) { mutableStateOf(state.input.raw) }
+
+    Scaffold(
+        contentWindowInsets = aplContentWindowInsets(hasBottomNav = true),
+        topBar = {
+            if (isSelectionMode) {
+                TopAppBar(
+                    title = { Text("${selectedHexes.size}") },
+                    navigationIcon = {
+                        IconButton(onClick = { selectedHexes = emptySet() }) {
+                            Icon(Icons.TwoTone.Close, contentDescription = null)
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            val aircraft = state.items
+                                .filterIsInstance<SearchViewModel.SearchItem.AircraftResult>()
+                                .filter { it.aircraft.hex in selectedHexes }
+                                .map { it.aircraft }
+                            onShowOnMap(aircraft)
+                            selectedHexes = emptySet()
+                        }) {
+                            Icon(Icons.TwoTone.Map, contentDescription = stringResource(R.string.common_show_on_map_action))
+                        }
+                    },
+                )
+            }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = { BottomNavBar(selectedTab = 1) },
+    ) { contentPadding ->
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+        ) {
+            val gridColumns = (maxWidth / 350.dp).toInt().coerceIn(1, 3)
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(gridColumns),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Row(
+                    modifier = Modifier
+                        .widthIn(max = 600.dp)
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    TextField(
+                        value = searchText,
+                        onValueChange = { searchText = it },
+                        modifier = Modifier.weight(1f),
+                        placeholder = {
+                            Text(
+                                text = when (state.input.mode) {
+                                    SearchViewModel.State.Mode.ALL -> stringResource(R.string.search_mode_all_hint)
+                                    SearchViewModel.State.Mode.HEX -> stringResource(R.string.search_mode_hex_hint)
+                                    SearchViewModel.State.Mode.CALLSIGN -> stringResource(R.string.search_mode_callsign_hint)
+                                    SearchViewModel.State.Mode.REGISTRATION -> stringResource(R.string.search_mode_registration_hint)
+                                    SearchViewModel.State.Mode.SQUAWK -> stringResource(R.string.search_mode_squawk_hint)
+                                    SearchViewModel.State.Mode.AIRFRAME -> stringResource(R.string.search_mode_airframe_hint)
+                                    SearchViewModel.State.Mode.INTERESTING -> stringResource(R.string.search_mode_military_hint)
+                                    SearchViewModel.State.Mode.POSITION -> stringResource(R.string.search_mode_location_hint)
+                                },
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(Icons.TwoTone.Search, contentDescription = null)
+                        },
+                        trailingIcon = {
+                            if (searchText.isNotEmpty()) {
+                                IconButton(onClick = {
+                                    searchText = ""
+                                    onSearchText("")
+                                }) {
+                                    Icon(Icons.TwoTone.Clear, contentDescription = null)
+                                }
+                            }
+                        },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                onSearchText(searchText)
+                                keyboardController?.hide()
+                            },
+                        ),
+                        shape = RoundedCornerShape(28.dp),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        ),
+                    )
+                    if (state.input.mode == SearchViewModel.State.Mode.POSITION) {
+                        IconButton(onClick = onPositionHome) {
+                            Icon(Icons.TwoTone.MyLocation, contentDescription = null)
+                        }
+                    }
+                    IconButton(onClick = onSettings) {
+                        Icon(Icons.TwoTone.Settings, contentDescription = null)
+                    }
+                }
+                }
+            }
+
+            item(span = StaggeredGridItemSpan.FullLine) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(vertical = 2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    SearchViewModel.State.Mode.entries.forEach { mode ->
+                        FilterChip(
+                            selected = state.input.mode == mode,
+                            onClick = { onModeSelected(mode) },
+                            label = {
+                                Text(
+                                    text = when (mode) {
+                                        SearchViewModel.State.Mode.ALL -> stringResource(R.string.search_mode_chip_all)
+                                        SearchViewModel.State.Mode.HEX -> stringResource(R.string.search_mode_chip_hex)
+                                        SearchViewModel.State.Mode.CALLSIGN -> stringResource(R.string.search_mode_chip_callsign)
+                                        SearchViewModel.State.Mode.REGISTRATION -> stringResource(R.string.search_mode_chip_registration)
+                                        SearchViewModel.State.Mode.SQUAWK -> stringResource(R.string.search_mode_chip_squawk)
+                                        SearchViewModel.State.Mode.AIRFRAME -> stringResource(R.string.search_mode_chip_airframe)
+                                        SearchViewModel.State.Mode.INTERESTING -> stringResource(R.string.search_mode_chip_interesting)
+                                        SearchViewModel.State.Mode.POSITION -> stringResource(R.string.search_mode_chip_position)
+                                    },
+                                )
+                            },
+                        )
+                    }
+                }
+            }
+
+            item(span = StaggeredGridItemSpan.FullLine) {
+                HorizontalDivider()
+            }
+
+            items(
+                items = state.items,
+                key = { item ->
+                    when (item) {
+                        is SearchViewModel.SearchItem.LocationPrompt -> "location_prompt"
+                        is SearchViewModel.SearchItem.Searching -> "searching"
+                        is SearchViewModel.SearchItem.NoResults -> "no_results"
+                        is SearchViewModel.SearchItem.Summary -> "summary"
+                        is SearchViewModel.SearchItem.AircraftResult -> item.aircraft.hex
+                    }
+                },
+                span = { item ->
+                    if (item is SearchViewModel.SearchItem.AircraftResult) {
+                        StaggeredGridItemSpan.SingleLane
+                    } else {
+                        StaggeredGridItemSpan.FullLine
+                    }
+                },
+            ) { item ->
+                when (item) {
+                    is SearchViewModel.SearchItem.LocationPrompt -> LocationPromptItem(
+                        onGrant = onGrantLocation,
+                        onDismiss = onDismissLocation,
+                    )
+
+                    is SearchViewModel.SearchItem.Searching -> SearchingItem(
+                        aircraftCount = item.aircraftCount,
+                    )
+
+                    is SearchViewModel.SearchItem.NoResults -> NoResultsItem(
+                        onStartFeeding = onStartFeeding,
+                    )
+
+                    is SearchViewModel.SearchItem.Summary -> SummaryItem(
+                        aircraftCount = item.aircraftCount,
+                        cacheOnlyCount = item.cacheOnlyCount,
+                    )
+
+                    is SearchViewModel.SearchItem.AircraftResult -> AircraftResultItem(
+                        item = item,
+                        isSelected = item.aircraft.hex in selectedHexes,
+                        onClick = {
+                            if (isSelectionMode) {
+                                selectedHexes = if (item.aircraft.hex in selectedHexes) {
+                                    selectedHexes - item.aircraft.hex
+                                } else {
+                                    selectedHexes + item.aircraft.hex
+                                }
+                            } else {
+                                onAircraftClick(item.aircraft)
+                            }
+                        },
+                        onLongClick = {
+                            selectedHexes = if (item.aircraft.hex in selectedHexes) {
+                                selectedHexes - item.aircraft.hex
+                            } else {
+                                selectedHexes + item.aircraft.hex
+                            }
+                        },
+                        onThumbnailClick = onThumbnailClick,
+                        onWatchClick = { item.watch?.let(onWatchClick) },
+                    )
+                }
+            }
+        }
+        }
+    }
+}
+
+@Composable
+private fun LocationPromptItem(
+    onGrant: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.search_location_prompt_title),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = stringResource(R.string.search_location_prompt_body),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.common_dismiss_action))
+                }
+                TextButton(onClick = onGrant) {
+                    Text(stringResource(R.string.common_grant_permission_action))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchingItem(aircraftCount: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = pluralStringResource(R.plurals.search_progress_body, aircraftCount, aircraftCount),
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+}
+
+@Composable
+private fun NoResultsItem(onStartFeeding: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(R.string.search_empty_title),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(R.string.search_empty_body),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+        TextButton(onClick = onStartFeeding, modifier = Modifier.padding(top = 8.dp)) {
+            Text(stringResource(R.string.common_start_feeding_action))
+        }
+    }
+}
+
+@Composable
+private fun SummaryItem(aircraftCount: Int, cacheOnlyCount: Int = 0) {
+    Text(
+        text = if (cacheOnlyCount > 0) {
+            pluralStringResource(R.plurals.search_summary_x_aircraft_y_cached, aircraftCount, aircraftCount, cacheOnlyCount)
+        } else {
+            pluralStringResource(R.plurals.search_summary_x_aircraft, aircraftCount, aircraftCount)
+        },
+        style = MaterialTheme.typography.labelMedium,
+        modifier = Modifier.padding(vertical = 8.dp),
+    )
+}
+
+@Composable
+private fun AircraftResultItem(
+    item: SearchViewModel.SearchItem.AircraftResult,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onThumbnailClick: (de.taymaerz.skyfox.common.planespotters.PlanespottersMeta) -> Unit,
+    onWatchClick: () -> Unit,
+) {
+    val aircraft = item.aircraft
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick,
+            ),
+        colors = if (isSelected) {
+            androidx.compose.material3.CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+            )
+        } else {
+            androidx.compose.material3.CardDefaults.cardColors()
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = aircraft.registration ?: "?",
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = "| #${aircraft.hex}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = aircraft.messageTypeLabel,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            if (item.freshness != SearchViewModel.Freshness.LIVE) {
+                val relativeTime = DateUtils.getRelativeTimeSpanString(
+                    aircraft.seenAt.toEpochMilli(),
+                    System.currentTimeMillis(),
+                    DateUtils.MINUTE_IN_MILLIS,
+                ).toString()
+                val freshnessColor = when (item.freshness) {
+                    SearchViewModel.Freshness.RECENT -> MaterialTheme.colorScheme.outline
+                    SearchViewModel.Freshness.STALE -> MaterialTheme.colorScheme.tertiary
+                    SearchViewModel.Freshness.OLD -> MaterialTheme.colorScheme.error
+                    else -> MaterialTheme.colorScheme.outline
+                }
+                val lastSeenDescription = stringResource(R.string.search_aircraft_last_seen_description, relativeTime)
+                Text(
+                    text = relativeTime,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = freshnessColor,
+                    modifier = Modifier.semantics { contentDescription = lastSeenDescription },
+                )
+            }
+
+            Spacer(Modifier.height(4.dp))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                PlanespottersThumbnail(
+                    query = AircraftThumbnailQuery(hex = aircraft.hex, registration = aircraft.registration),
+                    modifier = Modifier.size(width = 100.dp, height = 67.dp),
+                    onImageClick = onThumbnailClick,
+                )
+
+                Spacer(Modifier.width(8.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        InfoCell(
+                            value = aircraft.callsign?.takeIf { it.isNotBlank() } ?: "?",
+                            label = stringResource(R.string.common_callsign_label),
+                            modifier = Modifier.weight(1f),
+                        )
+                        InfoCell(
+                            value = aircraft.squawk ?: "?",
+                            label = stringResource(R.string.common_squawk_label),
+                            modifier = Modifier.weight(1f),
+                            isAlert = aircraft.isEmergencySquawk,
+                        )
+                    }
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        InfoCell(
+                            value = item.distanceInMeter?.let { "${(it / 1000).toInt()} km" } ?: "?",
+                            label = stringResource(R.string.common_distance_label),
+                            modifier = Modifier.weight(1f),
+                        )
+                        InfoCell(
+                            value = aircraft.description ?: "?",
+                            label = stringResource(R.string.common_airframe_label),
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+            }
+
+            if (item.watch != null) {
+                Spacer(Modifier.height(4.dp))
+                TextButton(onClick = onWatchClick, modifier = Modifier.align(Alignment.End)) {
+                    Icon(
+                        imageVector = Icons.TwoTone.NotificationsActive,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(R.string.watch_list_watch_edit_label),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview2
+@Composable
+private fun LocationPromptItemPreview() {
+    PreviewWrapper { LocationPromptItem(onGrant = {}, onDismiss = {}) }
+}
+
+@Preview2
+@Composable
+private fun SearchingItemPreview() {
+    PreviewWrapper { SearchingItem(aircraftCount = 42) }
+}
+
+@Preview2
+@Composable
+private fun NoResultsItemPreview() {
+    PreviewWrapper { NoResultsItem(onStartFeeding = {}) }
+}
+
+@Preview2
+@Composable
+private fun SummaryItemPreview() {
+    PreviewWrapper { SummaryItem(aircraftCount = 15) }
+}
+
+@Preview2
+@Composable
+private fun AircraftResultItemPreview() {
+    PreviewWrapper {
+        AircraftResultItem(
+            item = SearchViewModel.SearchItem.AircraftResult(
+                aircraft = FakeAircraft(),
+                watch = null,
+                distanceInMeter = 52_000f,
+            ),
+            isSelected = false,
+            onClick = {},
+            onLongClick = {},
+            onThumbnailClick = {},
+            onWatchClick = {},
+        )
+    }
+}
+
+@Preview2
+@Composable
+private fun AircraftResultItemSelectedPreview() {
+    PreviewWrapper {
+        AircraftResultItem(
+            item = SearchViewModel.SearchItem.AircraftResult(
+                aircraft = FakeAircraft(),
+                watch = mockAircraftWatch(),
+                distanceInMeter = null,
+            ),
+            isSelected = true,
+            onClick = {},
+            onLongClick = {},
+            onThumbnailClick = {},
+            onWatchClick = {},
+        )
+    }
+}

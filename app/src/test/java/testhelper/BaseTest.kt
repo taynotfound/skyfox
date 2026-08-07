@@ -1,8 +1,8 @@
 package testhelper
 
-import eu.darken.apl.common.debug.logging.Logging
-import eu.darken.apl.common.debug.logging.Logging.Priority.VERBOSE
-import eu.darken.apl.common.debug.logging.log
+import de.taymaerz.skyfox.common.debug.logging.Logging
+import de.taymaerz.skyfox.common.debug.logging.Logging.Priority.VERBOSE
+import de.taymaerz.skyfox.common.debug.logging.log
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.AfterAll
 import testhelpers.logging.JUnitLogger

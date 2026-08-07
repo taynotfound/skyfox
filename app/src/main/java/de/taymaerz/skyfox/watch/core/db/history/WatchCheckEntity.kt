@@ -1,0 +1,24 @@
+package de.taymaerz.skyfox.watch.core.db.history
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import de.taymaerz.skyfox.watch.core.WatchId
+import java.time.Instant
+import java.util.UUID
+
+@Entity(
+    tableName = "watch_checks",
+    indices = [
+        Index(value = ["watch_id", "checked_at"]),
+        Index(value = ["checked_at"]),
+    ],
+)
+data class WatchCheckEntity(
+    @PrimaryKey @ColumnInfo(name = "id") val id: String = UUID.randomUUID().toString(),
+    @ColumnInfo(name = "checked_at") val checkedAt: Instant = Instant.now(),
+    @ColumnInfo(name = "watch_id") val watchId: WatchId,
+    @ColumnInfo(name = "aircraft_count") val aircraftcount: Int,
+    @ColumnInfo(name = "seen_hexes") val seenHexes: String? = null,
+)

@@ -1,0 +1,153 @@
+package de.taymaerz.skyfox.common.debug.recorder.ui
+
+import android.content.Context
+import android.content.Intent
+import androidx.core.content.FileProvider
+import androidx.lifecycle.SavedStateHandle
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import de.taymaerz.skyfox.R
+import de.taymaerz.skyfox.common.BuildConfigWrap
+import de.taymaerz.skyfox.common.PrivacyPolicy
+import de.taymaerz.skyfox.common.WebpageTool
+import de.taymaerz.skyfox.common.compression.Zipper
+import de.taymaerz.skyfox.main.core.GeneralSettings
+import de.taymaerz.skyfox.main.core.ThemeState
+import de.taymaerz.skyfox.main.core.themeState
+import de.taymaerz.skyfox.common.coroutine.DispatcherProvider
+import de.taymaerz.skyfox.common.debug.logging.Logging.Priority.ERROR
+import de.taymaerz.skyfox.common.debug.logging.asLog
+import de.taymaerz.skyfox.common.debug.logging.log
+import de.taymaerz.skyfox.common.debug.logging.logTag
+import de.taymaerz.skyfox.common.flow.SingleEventFlow
+import de.taymaerz.skyfox.common.flow.combine
+import de.taymaerz.skyfox.common.flow.onError
+import de.taymaerz.skyfox.common.flow.replayingShare
+import de.taymaerz.skyfox.common.uix.ViewModel4
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.plus
+import java.io.File
+import javax.inject.Inject
+
+@HiltViewModel
+class RecorderViewModel @Inject constructor(
+    handle: SavedStateHandle,
+    dispatcherProvider: DispatcherProvider,
+    @param:ApplicationContext private val context: Context,
+    private val webpageTool: WebpageTool,
+    generalSettings: GeneralSettings,
+) : ViewModel4(dispatcherProvider = dispatcherProvider, tag = TAG) {
+
+    val themeState = generalSettings.themeState
+        .stateIn(vmScope, SharingStarted.Eagerly, ThemeState())
+
+    private val recordedPath = handle.get<String>(RecorderActivity.RECORD_PATH)!!
+    private val pathCache = MutableStateFlow(recordedPath)
+
+    data class LogData(
+        val file: File,
+        val size: Long,
+    )
+
+    private val logObsDefault = pathCache
+        .map { File(it) }
+        .map { LogData(it, it.length()) }
+        .catch { log(TAG, ERROR) { "Failed to get default log size: ${it.asLog()}" } }
+        .replayingShare(vmScope)
+
+    private val logObsShizuku = pathCache
+        .map { File(it + "_shizuku") }
+        .map { if (it.exists()) LogData(it, it.length()) else null }
+        .catch { log(TAG, ERROR) { "Failed to get Shizuku log size: ${it.asLog()}" } }
+        .replayingShare(vmScope)
+
+    private val logObsRoot = pathCache
+        .map { File(it + "_root") }
+        .map { if (it.exists()) LogData(it, it.length()) else null }
+        .catch { log(TAG, ERROR) { "Failed to get root log size: ${it.asLog()}" } }
+        .replayingShare(vmScope)
+
+    private val resultCacheCompressedObs = combine(
+        logObsDefault,
+        logObsShizuku,
+        logObsRoot,
+    ) { default, shizuku, root ->
+        val zipContent = listOfNotNull(
+            default.file.path,
+            shizuku?.file?.path,
+            root?.file?.path
+        )
+        val zipFile = File("${default.file.path}.zip")
+        Zipper().zip(zipContent, zipFile.path)
+        zipFile to zipFile.length()
+    }
+        .catch { log(TAG, ERROR) { "Failed to compress log: ${it.asLog()}" } }
+        .replayingShare(vmScope + dispatcherProvider.IO)
+
+    val shareEvent = SingleEventFlow<Intent>()
+
+    val state = combine(
+        logObsDefault,
+        resultCacheCompressedObs,
+    ) { default, (compressedFile, compressedSize) ->
+        State(
+            normalPath = default.file,
+            normalSize = default.size,
+            compressedPath = compressedFile,
+            compressedSize = compressedSize,
+            loading = false
+        )
+    }
+        .onError { errorEvents.emit(it) }
+        .stateIn(vmScope, SharingStarted.WhileSubscribed(5000), State())
+
+    fun share() = launch {
+        val (file, _) = resultCacheCompressedObs.first()
+
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            val uri = FileProvider.getUriForFile(
+                context,
+                BuildConfigWrap.APPLICATION_ID + ".provider",
+                file
+            )
+
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            type = "application/zip"
+
+            addCategory(Intent.CATEGORY_DEFAULT)
+            putExtra(
+                Intent.EXTRA_SUBJECT,
+                "${BuildConfigWrap.APPLICATION_ID} DebugLog - ${BuildConfigWrap.VERSION_DESCRIPTION})"
+            )
+            putExtra(Intent.EXTRA_TEXT, "Your text here.")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        val chooserIntent = Intent.createChooser(intent, context.getString(R.string.debug_debuglog_file_label))
+        shareEvent.emit(chooserIntent)
+    }
+
+    fun goPrivacyPolicy() {
+        webpageTool.open(PrivacyPolicy.URL)
+    }
+
+    data class State(
+        val normalPath: File? = null,
+        val normalSize: Long = -1L,
+        val compressedPath: File? = null,
+        val compressedSize: Long = -1L,
+        val loading: Boolean = true
+    )
+
+    companion object {
+        private val TAG = logTag("Debug", "Recorder", "ViewModel")
+    }
+}

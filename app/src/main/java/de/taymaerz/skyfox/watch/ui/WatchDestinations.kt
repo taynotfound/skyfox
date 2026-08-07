@@ -1,0 +1,39 @@
+package de.taymaerz.skyfox.watch.ui
+
+import de.taymaerz.skyfox.common.navigation.NavigationDestination
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class DestinationWatchList(
+    val targetAircraft: List<String>? = null,
+) : NavigationDestination
+
+@Serializable
+data class DestinationWatchDetails(
+    val watchId: String,
+) : NavigationDestination
+
+@Serializable
+data class DestinationCreateAircraftWatch(
+    val hex: String? = null,
+    val note: String? = null,
+) : NavigationDestination
+
+@Serializable
+data class DestinationCreateFlightWatch(
+    val callsign: String? = null,
+    val note: String? = null,
+) : NavigationDestination
+
+@Serializable
+data class DestinationCreateSquawkWatch(
+    val squawk: String? = null,
+    val note: String? = null,
+) : NavigationDestination
+
+@Serializable
+data class DestinationCreateLocationWatch(
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val note: String? = null,
+) : NavigationDestination

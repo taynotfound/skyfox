@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-LOCALES_FILE="$PROJECT_DIR/app/src/screenshotTest/kotlin/eu/darken/apl/screenshots/PlayStoreLocales.kt"
+LOCALES_FILE="$PROJECT_DIR/app/src/screenshotTest/kotlin/de/taymaerz/skyfox/screenshots/PlayStoreLocales.kt"
 REFERENCE_DIR="$PROJECT_DIR/app/src/screenshotTestFossDebug/reference"
 GRADLE="$PROJECT_DIR/gradlew"
 GRADLE_TASK="updateFossDebugScreenshotTest"
@@ -107,7 +107,7 @@ for ((i = 0; i < NUM_LOCALES; i += BATCH_SIZE)); do
 
     # Write temporary PlayStoreLocales.kt with only the batch locales
     cat > "$LOCALES_FILE" << KOTLIN_EOF
-package eu.darken.apl.screenshots
+package de.taymaerz.skyfox.screenshots
 
 import androidx.compose.ui.tooling.preview.Preview
 

@@ -1,0 +1,345 @@
+package de.taymaerz.skyfox.map.ui
+
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorManager
+import dagger.hilt.android.lifecycle.HiltViewModel
+import de.taymaerz.skyfox.R
+import dagger.hilt.android.qualifiers.ApplicationContext
+import de.taymaerz.skyfox.common.ClipboardHelper
+import de.taymaerz.skyfox.common.WebpageTool
+import de.taymaerz.skyfox.common.coroutine.DispatcherProvider
+import de.taymaerz.skyfox.common.debug.logging.Logging.Priority.INFO
+import de.taymaerz.skyfox.common.debug.logging.log
+import de.taymaerz.skyfox.common.debug.logging.logTag
+import de.taymaerz.skyfox.common.flight.FlightRepo
+import de.taymaerz.skyfox.common.flight.FlightRoute
+import de.taymaerz.skyfox.common.flow.SingleEventFlow
+import de.taymaerz.skyfox.common.location.LocationManager2
+import de.taymaerz.skyfox.common.permissions.Permission
+import de.taymaerz.skyfox.common.uix.ViewModel4
+import de.taymaerz.skyfox.main.core.AircraftRepo
+import de.taymaerz.skyfox.main.core.aircraft.AircraftHex
+import de.taymaerz.skyfox.main.core.findByHex
+import de.taymaerz.skyfox.main.ui.settings.DestinationSettingsIndex
+import de.taymaerz.skyfox.map.core.MapAircraftDetails
+import de.taymaerz.skyfox.map.core.MapLayer
+import de.taymaerz.skyfox.map.core.MapOptions
+import de.taymaerz.skyfox.map.core.MapSettings
+import de.taymaerz.skyfox.map.core.MapSidebarData
+import de.taymaerz.skyfox.map.core.SavedCamera
+import de.taymaerz.skyfox.search.core.SearchQuery
+import de.taymaerz.skyfox.search.core.SearchRepo
+import de.taymaerz.skyfox.search.ui.DestinationSearch
+import de.taymaerz.skyfox.watch.core.WatchRepo
+import de.taymaerz.skyfox.watch.core.types.AircraftWatch
+import de.taymaerz.skyfox.watch.ui.DestinationCreateAircraftWatch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.withTimeoutOrNull
+import javax.inject.Inject
+
+@HiltViewModel
+class MapViewModel @Inject constructor(
+    dispatcherProvider: DispatcherProvider,
+    @param:ApplicationContext private val context: Context,
+    sensorManager: SensorManager,
+    private val clipboardHelper: ClipboardHelper,
+    private val mapSettings: MapSettings,
+    private val webpageTool: WebpageTool,
+    private val searchRepo: SearchRepo,
+    private val watchRepo: WatchRepo,
+    private val aircraftRepo: AircraftRepo,
+    private val flightRepo: FlightRepo,
+    private val locationManager2: LocationManager2,
+) : ViewModel4(
+    dispatcherProvider = dispatcherProvider,
+    tag = logTag("Map", "ViewModel"),
+) {
+
+    val hasRotationSensor: Boolean =
+        sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) != null ||
+        sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR) != null
+
+    val useNativePanel: StateFlow<Boolean> = mapSettings.isNativeInfoPanelEnabled.flow
+        .stateIn(vmScope, SharingStarted.Eagerly, true)
+
+    val showHoverInfo: StateFlow<Boolean> = mapSettings.isHoverInfoEnabled.flow
+        .stateIn(vmScope, SharingStarted.Eagerly, false)
+
+    val mapLayer: StateFlow<String> = mapSettings.mapLayer.flow
+        .stateIn(vmScope, SharingStarted.Eagerly, MapLayer.OSM.key)
+
+    fun setMapLayer(layer: MapLayer) {
+        log(tag) { "setMapLayer($layer)" }
+        launch { mapSettings.mapLayer.update { layer.key } }
+    }
+
+    val enabledOverlays: StateFlow<Set<String>?> = mapSettings.enabledOverlays.flow
+        .stateIn(vmScope, SharingStarted.Eagerly, null)
+
+    private val _buttonStates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    val buttonStates: StateFlow<Map<String, Boolean>> = _buttonStates
+
+    private val _sidebarDataRaw = MutableStateFlow<MapSidebarData?>(null)
+
+    private val _sidebarSort = MutableStateFlow<MapSidebarData.SortField?>(MapSidebarData.SortField.CALLSIGN)
+    val sidebarSort: StateFlow<MapSidebarData.SortField?> = _sidebarSort
+
+    private val _sidebarSortAscending = MutableStateFlow(true)
+    val sidebarSortAscending: StateFlow<Boolean> = _sidebarSortAscending
+
+    val sidebarData: StateFlow<MapSidebarData?> = combine(
+        _sidebarDataRaw,
+        _sidebarSort,
+        _sidebarSortAscending,
+    ) { data, sort, ascending ->
+        if (data == null || sort == null) return@combine data
+        val sorted = data.aircraft.sortedWith(
+            compareBy<MapSidebarData.SidebarAircraft> {
+                when (sort) {
+                    MapSidebarData.SortField.CALLSIGN -> it.callsign ?: it.hex
+                    MapSidebarData.SortField.TYPE -> it.icaoType ?: ""
+                    MapSidebarData.SortField.SQUAWK -> it.squawk ?: ""
+                    MapSidebarData.SortField.ALTITUDE -> null
+                    MapSidebarData.SortField.SPEED -> null
+                }
+            }.let { cmp ->
+                when (sort) {
+                    MapSidebarData.SortField.ALTITUDE -> compareBy<MapSidebarData.SidebarAircraft> { it.altitudeNumeric }
+                    MapSidebarData.SortField.SPEED -> compareBy<MapSidebarData.SidebarAircraft> { it.speedNumeric }
+                    else -> cmp
+                }
+            }.let { cmp -> if (ascending) cmp else cmp.reversed() }
+        )
+        data.copy(aircraft = sorted)
+    }.stateIn(vmScope, SharingStarted.WhileSubscribed(5000), null)
+
+    private val _isSidebarOpen = MutableStateFlow(false)
+    val isSidebarOpen: StateFlow<Boolean> = _isSidebarOpen
+
+    private val _aircraftDetails = MutableStateFlow<MapAircraftDetails?>(null)
+    val aircraftDetails: StateFlow<MapAircraftDetails?> = _aircraftDetails
+
+    fun onAircraftDetailsChanged(details: MapAircraftDetails) {
+        _aircraftDetails.value = details
+    }
+
+    fun onAircraftDeselected() {
+        _aircraftDetails.value = null
+    }
+
+    fun onButtonStatesChanged(jsonData: String) {
+        try {
+            val json = org.json.JSONObject(jsonData)
+            val states = mutableMapOf<String, Boolean>()
+            json.keys().forEach { key -> states[key] = json.getBoolean(key) }
+            _buttonStates.value = states
+        } catch (e: Exception) {
+            log(tag) { "Failed to parse button states: $e" }
+        }
+    }
+
+    fun clearButtonStates() {
+        _buttonStates.value = emptyMap()
+    }
+
+    fun onAircraftListChanged(data: MapSidebarData) {
+        _sidebarDataRaw.value = data
+    }
+
+    fun toggleSort(field: MapSidebarData.SortField) {
+        if (_sidebarSort.value == field) {
+            if (_sidebarSortAscending.value) {
+                _sidebarSortAscending.value = false
+            } else {
+                _sidebarSort.value = null
+                _sidebarSortAscending.value = true
+            }
+        } else {
+            _sidebarSort.value = field
+            _sidebarSortAscending.value = true
+        }
+    }
+
+    fun toggleSidebar() {
+        _isSidebarOpen.value = !_isSidebarOpen.value
+    }
+
+    fun closeSidebar() {
+        _isSidebarOpen.value = false
+    }
+
+    fun selectAircraftOnMap(hex: String) {
+        _isSidebarOpen.value = false
+        events.emitBlocking(MapEvents.SelectAircraftOnMap(hex))
+    }
+
+    private var initialized = false
+    private val currentOptions = MutableStateFlow(MapOptions())
+
+    fun init(mapOptions: MapOptions?) {
+        if (initialized) return
+        initialized = true
+
+        val options = mapOptions ?: MapOptions()
+        currentOptions.value = options
+
+        if (mapOptions == null) {
+            launch {
+                val isEnabled = mapSettings.isRestoreLastViewEnabled.flow.first()
+                val savedCamera = mapSettings.lastCamera.flow.first()
+                val homeLocation = mapSettings.homeLocation.flow.first()
+                when {
+                    isEnabled && savedCamera != null -> currentOptions.value = MapOptions(camera = savedCamera.toCamera())
+                    homeLocation != null -> currentOptions.value = MapOptions(camera = homeLocation.toCamera())
+                }
+            }
+        }
+    }
+
+    val tagline: String = context.resources.getStringArray(R.array.map_taglines).random()
+
+    val events = SingleEventFlow<MapEvents>()
+
+    val state = currentOptions
+        .onEach { log(tag, INFO) { "New MapOptions: $it" } }
+        .map { options -> State(options = options, tagline = tagline) }
+        .asStateFlow()
+
+    private val selectedHex = currentOptions
+        .map { it.filter.selected.firstOrNull() }
+        .distinctUntilChanged()
+
+    sealed interface RouteDisplay {
+        data class Loading(val hex: AircraftHex) : RouteDisplay
+        data class Result(val hex: AircraftHex, val route: FlightRoute?) : RouteDisplay
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val routeDisplay: Flow<RouteDisplay?> = selectedHex
+        .transformLatest { hex ->
+            if (hex == null) {
+                emit(null)
+                return@transformLatest
+            }
+            val aircraft = aircraftRepo.findByHex(hex)
+                ?: searchRepo.search(SearchQuery.Hex(hex)).aircraft.firstOrNull()
+            flightRepo.prefetch(hex, aircraft?.callsign)
+            emitAll(
+                flightRepo.getByHex(hex).map { route ->
+                    if (route == null) RouteDisplay.Loading(hex)
+                    else RouteDisplay.Result(hex, route)
+                }
+            )
+        }
+
+    fun goToMyLocation() = launch {
+        log(tag) { "goToMyLocation()" }
+        if (!Permission.ACCESS_COARSE_LOCATION.isGranted(context)) {
+            log(tag, INFO) { "goToMyLocation(): Requesting location permission" }
+            events.emit(MapEvents.RequestLocationPermission)
+            return@launch
+        }
+
+        val locationState = withTimeoutOrNull(10_000) {
+            locationManager2.state
+                .filterIsInstance<LocationManager2.State.Available>()
+                .first()
+        }
+
+        if (locationState != null) {
+            val loc = locationState.location
+            log(tag) { "goToMyLocation(): Centering on ${loc.latitude}, ${loc.longitude}" }
+            events.emit(MapEvents.CenterOnLocation(loc.latitude, loc.longitude))
+        } else {
+            log(tag, INFO) { "goToMyLocation(): Location unavailable" }
+            events.emit(MapEvents.LocationUnavailable)
+        }
+    }
+
+    fun openGallery(hex: String) {
+        navTo(de.taymaerz.skyfox.gallery.ui.DestinationGallery(hex = hex))
+    }
+
+    fun onOpenUrl(url: String) {
+        log(tag) { "onOpenUrl($url)" }
+        webpageTool.open(url)
+    }
+
+    fun onOptionsUpdated(options: MapOptions) = launch {
+        log(tag) { "onOptionsUpdated($options)" }
+        currentOptions.value = options
+
+        if (mapSettings.isRestoreLastViewEnabled.flow.first() && options.camera != null) {
+            val savedCamera = SavedCamera.from(options.camera)
+            mapSettings.lastCamera.update { savedCamera }
+            log(tag) { "Saved last camera: $savedCamera" }
+        }
+    }
+
+    fun showInSearch(hex: AircraftHex) {
+        log(tag) { "showInSearch($hex)" }
+        navTo(DestinationSearch(targetHexes = listOf(hex)))
+    }
+
+    fun addWatch(hex: AircraftHex) = launch {
+        log(tag) { "addWatch($hex)" }
+        aircraftRepo.findByHex(hex) ?: searchRepo.search(SearchQuery.Hex(hex)).aircraft.firstOrNull()
+        navTo(DestinationCreateAircraftWatch(hex = hex))
+        launch {
+            val added = withTimeoutOrNull(20 * 1000) {
+                watchRepo.status
+                    .mapNotNull { watches ->
+                        watches
+                            .filterIsInstance<AircraftWatch.Status>()
+                            .filter { it.hex == hex }
+                            .filter { it.tracked.isNotEmpty() }
+                            .firstOrNull()
+                    }
+                    .firstOrNull()
+            }
+            log(tag) { "addWatch(...): $added" }
+            if (added != null) events.emit(MapEvents.WatchAdded(added))
+        }
+    }
+
+    fun goToAr() {
+        log(tag) { "goToAr()" }
+        navTo(de.taymaerz.skyfox.ar.ui.DestinationAr)
+    }
+
+    fun goToSettings() {
+        navTo(DestinationSettingsIndex)
+    }
+
+    fun copyLink(hex: AircraftHex) {
+        clipboardHelper.copyToClipboard("https://globe.airplanes.live/?icao=$hex")
+    }
+
+    fun reset() = launch {
+        log(tag) { "reset()" }
+        currentOptions.value = MapOptions()
+        events.emit(MapEvents.ReloadMap)
+    }
+
+    data class State(
+        val options: MapOptions,
+        val tagline: String = "",
+    )
+}

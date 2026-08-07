@@ -3,7 +3,7 @@
 
     <application>
         <activity
-            android:name="eu.darken.apl.HiltTestActivity"
+            android:name="de.taymaerz.skyfox.HiltTestActivity"
             android:exported="false" />
     </application>
 

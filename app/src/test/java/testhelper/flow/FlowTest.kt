@@ -1,8 +1,8 @@
 package testhelper.flow
 
-import eu.darken.apl.common.debug.logging.Logging.Priority.WARN
-import eu.darken.apl.common.debug.logging.asLog
-import eu.darken.apl.common.debug.logging.log
+import de.taymaerz.skyfox.common.debug.logging.Logging.Priority.WARN
+import de.taymaerz.skyfox.common.debug.logging.asLog
+import de.taymaerz.skyfox.common.debug.logging.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin

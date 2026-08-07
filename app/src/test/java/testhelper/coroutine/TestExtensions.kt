@@ -1,6 +1,6 @@
 package testhelper.coroutine
 
-import eu.darken.apl.common.debug.logging.asLog
+import de.taymaerz.skyfox.common.debug.logging.asLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestScope

@@ -1,8 +1,0 @@
-package eu.darken.apl.common.navigation
-
-import androidx.navigation3.runtime.EntryProviderScope
-import androidx.navigation3.runtime.NavKey
-
-interface NavigationEntry {
-    fun EntryProviderScope<NavKey>.setup()
-}

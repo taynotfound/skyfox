@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-REFERENCE_DIR="$PROJECT_DIR/app/src/screenshotTestFossDebug/reference/eu/darken/apl/screenshots/PlayStoreScreenshotsKt"
+REFERENCE_DIR="$PROJECT_DIR/app/src/screenshotTestFossDebug/reference/de/taymaerz/skyfox/screenshots/PlayStoreScreenshotsKt"
 FASTLANE_DIR="$PROJECT_DIR/fastlane/metadata/android"
 
 usage() {

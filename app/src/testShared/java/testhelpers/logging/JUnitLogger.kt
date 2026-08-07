@@ -1,6 +1,6 @@
 package testhelpers.logging
 
-import eu.darken.apl.common.debug.logging.Logging
+import de.taymaerz.skyfox.common.debug.logging.Logging
 
 class JUnitLogger(private val minLogLevel: Logging.Priority = Logging.Priority.VERBOSE) : Logging.Logger {
 

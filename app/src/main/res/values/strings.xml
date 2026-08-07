@@ -272,6 +272,12 @@
 
     <string name="map_controls_action">Map controls</string>
     <string name="map_settings_layer_title">Map style</string>
+    <string name="map_settings_home_location_title">Start location</string>
+    <string name="map_settings_home_location_summary">Set a default location the map opens at</string>
+    <string name="map_settings_home_location_dialog_hint">The map will open here when no last view is restored.</string>
+    <string name="map_settings_home_location_lat_label">Latitude</string>
+    <string name="map_settings_home_location_lon_label">Longitude</string>
+    <string name="map_settings_home_location_clear_action">Clear</string>
     <string name="map_settings_layer_summary">Choose the map tile layer</string>
     <string name="map_layer_osm">OpenStreetMap</string>
     <string name="map_layer_osm_de">OpenStreetMap DE</string>

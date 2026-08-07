@@ -1,0 +1,12 @@
+package de.taymaerz.skyfox.common.notifications
+
+import android.app.PendingIntent
+import de.taymaerz.skyfox.common.hasApiLevel
+
+object PendingIntentFlagCompat {
+    val FLAG_IMMUTABLE: Int = if (hasApiLevel(31)) {
+        PendingIntent.FLAG_IMMUTABLE
+    } else {
+        0
+    }
+}
