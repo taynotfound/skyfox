@@ -35,8 +35,7 @@ class MapSettingsViewModel @Inject constructor(
             isNativeInfoPanelEnabled = values[1] as Boolean,
             isHoverInfoEnabled = values[2] as Boolean,
             mapLayer = MapLayer.fromKey(values[3] as String),
-            @Suppress("UNCHECKED_CAST")
-            enabledOverlays = (values[4] as? Set<String>) ?: emptySet(),
+            enabledOverlays = @Suppress("UNCHECKED_CAST") ((values[4] as? Set<String>) ?: emptySet()),
             homeLocation = values[5] as? SavedCamera,
         )
     }.asStateFlow()
