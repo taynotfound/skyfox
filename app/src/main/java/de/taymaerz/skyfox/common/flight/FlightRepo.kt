@@ -31,6 +31,23 @@ class FlightRepo @Inject constructor(
     @param:AppScope private val appScope: CoroutineScope,
 ) {
 
+    // ponytail: in-memory cache only; Room table if persistence across restarts ever matters
+    private val aircraftInfoCache = mutableMapOf<String, de.taymaerz.skyfox.common.flight.api.AdsbdbApi.AircraftData?>()
+
+    suspend fun aircraftInfo(hex: AircraftHex): de.taymaerz.skyfox.common.flight.api.AdsbdbApi.AircraftData? {
+        val key = hex.uppercase()
+        if (aircraftInfoCache.containsKey(key)) return aircraftInfoCache[key]
+        val info = try {
+            adsbdbEndpoint.getAircraft(key)
+        } catch (e: Exception) {
+            log(TAG, WARN) { "aircraftInfo($key) failed: $e" }
+            return null // don't cache failures
+        }
+        if (aircraftInfoCache.size > 200) aircraftInfoCache.clear()
+        aircraftInfoCache[key] = info
+        return info
+    }
+
     fun prefetch(hex: AircraftHex, callsign: Callsign?) {
         appScope.launch { lookup(hex, callsign) }
     }

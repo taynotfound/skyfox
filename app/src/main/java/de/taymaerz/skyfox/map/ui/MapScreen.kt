@@ -164,6 +164,8 @@ fun MapScreenHost(
             .launchIn(this)
     }
 
+    val aircraftInfo by vm.aircraftInfo.collectAsState(initial = null)
+
     // Fullscreen state
     var isFullscreen by rememberSaveable { mutableStateOf(false) }
 
@@ -389,6 +391,7 @@ fun MapScreenHost(
                         AircraftDetailsSheetContent(
                             details = details,
                             route = currentRoute,
+                            aircraftInfo = aircraftInfo,
                             onClose = { scope.launch { sheetState.hide() } },
                             onCopyLink = { hex ->
                                 vm.copyLink(hex)
@@ -649,6 +652,7 @@ private enum class SquawkEmergency(val code: String, @StringRes val meaningRes: 
 private fun AircraftDetailsSheetContent(
     details: MapAircraftDetails,
     route: FlightRoute?,
+    aircraftInfo: de.taymaerz.skyfox.common.flight.api.AdsbdbApi.AircraftData? = null,
     onClose: () -> Unit,
     onCopyLink: (String) -> Unit,
     onShowInSearch: (String) -> Unit,
@@ -831,6 +835,28 @@ private fun AircraftDetailsSheetContent(
                 // Route details (full airport names)
                 if (route != null && (route.origin?.name != null || route.destination?.name != null)) {
                     RouteDetailCard(route = route)
+                }
+
+                // Registry section (adsbdb aircraft DB)
+                if (aircraftInfo != null) {
+                    DetailSection(
+                        header = stringResource(R.string.map_aircraft_details_section_registry),
+                        rows = listOf(
+                            DetailRow(
+                                stringResource(R.string.map_aircraft_details_manufacturer_label) to aircraftInfo.manufacturer,
+                                stringResource(R.string.map_aircraft_details_type_label) to (aircraftInfo.type ?: aircraftInfo.icaoType),
+                            ),
+                            DetailRow(
+                                stringResource(R.string.map_aircraft_details_owner_label) to aircraftInfo.owner,
+                                stringResource(R.string.map_aircraft_details_owner_country_label) to aircraftInfo.ownerCountry,
+                            ),
+                            DetailRow(
+                                stringResource(R.string.map_aircraft_details_registration_label) to aircraftInfo.registration,
+                                null,
+                                leftMono = true,
+                            ),
+                        ),
+                    )
                 }
 
                 // Flight Data section

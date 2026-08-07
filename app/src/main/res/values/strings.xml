@@ -64,6 +64,12 @@
     <string name="settings_licenses_label">Licenses</string>
     <string name="general_thank_you_label">Thank you</string>
     <string name="settings_category_other_label">Other</string>
+    <string name="map_aircraft_details_section_registry">Registry</string>
+    <string name="map_aircraft_details_manufacturer_label">Manufacturer</string>
+    <string name="map_aircraft_details_type_label">Type</string>
+    <string name="map_aircraft_details_owner_label">Operator/Owner</string>
+    <string name="map_aircraft_details_owner_country_label">Country</string>
+    <string name="map_aircraft_details_registration_label">Registration</string>
     <string name="settings_category_upstream_label">Original developer</string>
     <string name="settings_upstream_repo_label">Upstream: airplanes.live app</string>
     <string name="settings_upstream_repo_desc">By d4rken — SkyFox is a fork of his work (GPL-3.0).</string>
@@ -124,7 +130,7 @@
     <string name="documentation_label">Documentation</string>
     <string name="discord_label">Discord</string>
     <string name="discord_description">A place to hang out in and ask questions.</string>
-    <string name="support_airplanes_live_discord_desc">The official airplanes.live Discord</string>
+    <string name="support_airplanes_live_discord_desc">Community Discord of the data provider (not affiliated)</string>
     <string name="issue_tracker_label">Issue tracker</string>
     <string name="issue_tracker_description">A public issue tracker for bug reports and feature requests.</string>
 
@@ -137,8 +143,8 @@
     <string name="acks_planespotters_desc">Thanks for providing the aircraft images.</string>
     <string name="acks_route_data_desc">Thanks for providing the flight route data.</string>
 
-    <string name="welcome_body1">This is a companion app for airplanes.live community members!</string>
-    <string name="welcome_body2">airplanes.live is a community-driven flight tracker with feeders around the world. It provides open and unfiltered access to worldwide air traffic data.</string>
+    <string name="welcome_body1">SkyFox is an independent flight tracking app. It is not affiliated with or endorsed by airplanes.live.</string>
+    <string name="welcome_body2">Flight data comes from airplanes.live, a community-driven network of feeders providing open, unfiltered access to worldwide air traffic data.</string>
     <string name="welcome_body3">Consider contributing data.</string>
 
     <string name="privacy_body1">This app does not collect or sell user data.</string>

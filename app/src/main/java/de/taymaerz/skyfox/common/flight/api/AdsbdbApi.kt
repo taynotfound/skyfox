@@ -50,6 +50,32 @@ interface AdsbdbApi {
         @SerialName("name") val name: String? = null,
     )
 
+    @Serializable
+    data class AircraftResponse(
+        @SerialName("response") val response: AircraftResponseData? = null,
+    )
+
+    @Serializable
+    data class AircraftResponseData(
+        @SerialName("aircraft") val aircraft: JsonElement? = null,
+    )
+
+    @Serializable
+    data class AircraftData(
+        @SerialName("type") val type: String? = null,
+        @SerialName("icao_type") val icaoType: String? = null,
+        @SerialName("manufacturer") val manufacturer: String? = null,
+        @SerialName("mode_s") val modeS: String? = null,
+        @SerialName("registration") val registration: String? = null,
+        @SerialName("registered_owner_country_name") val ownerCountry: String? = null,
+        @SerialName("registered_owner") val owner: String? = null,
+        @SerialName("url_photo") val photoUrl: String? = null,
+        @SerialName("url_photo_thumbnail") val photoThumbUrl: String? = null,
+    )
+
     @GET("v0/callsign/{callsign}")
     suspend fun getByCallsign(@Path("callsign") callsign: String): CallsignResponse
+
+    @GET("v0/aircraft/{hex}")
+    suspend fun getAircraft(@Path("hex") hex: String): AircraftResponse
 }

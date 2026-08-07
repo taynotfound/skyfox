@@ -2,7 +2,9 @@
 
 # SkyFox 🦊✈️
 
-> Live flight tracking for [airplanes.live](https://airplanes.live) — by **Tay März** ([@taynotfound](https://github.com/taynotfound)). Based on [d4rken-org/airplanes-live-app](https://github.com/d4rken-org/airplanes-live-app).
+> Live flight tracking using [airplanes.live](https://airplanes.live) data — by **Tay März** ([@taynotfound](https://github.com/taynotfound)). Based on [d4rken-org/airplanes-live-app](https://github.com/d4rken-org/airplanes-live-app).
+>
+> SkyFox is an independent project — not affiliated with or endorsed by airplanes.live.
 
 ## What's new in SkyFox
 

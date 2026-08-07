@@ -57,6 +57,15 @@ class AdsbdbEndpoint @Inject constructor(
         }
     }
 
+    suspend fun getAircraft(hex: String): AdsbdbApi.AircraftData? = withContext(dispatcherProvider.IO) {
+        log(TAG) { "getAircraft(hex=$hex)" }
+        val response = api.getAircraft(hex)
+        when (val el = response.response?.aircraft) {
+            is JsonObject -> json.decodeFromJsonElement<AdsbdbApi.AircraftData>(el)
+            else -> null
+        }
+    }
+
     companion object {
         private val TAG = logTag("Flight", "Adsbdb", "Endpoint")
     }

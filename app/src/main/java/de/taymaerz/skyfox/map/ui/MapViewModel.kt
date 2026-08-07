@@ -249,6 +249,13 @@ class MapViewModel @Inject constructor(
             )
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val aircraftInfo: Flow<de.taymaerz.skyfox.common.flight.api.AdsbdbApi.AircraftData?> = selectedHex
+        .transformLatest { hex ->
+            emit(null)
+            if (hex != null) emit(flightRepo.aircraftInfo(hex))
+        }
+
     fun goToMyLocation() = launch {
         log(tag) { "goToMyLocation()" }
         if (!Permission.ACCESS_COARSE_LOCATION.isGranted(context)) {
