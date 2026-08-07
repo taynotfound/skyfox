@@ -322,8 +322,23 @@ internal fun WebView.setupAircraftDetailsExtraction() {
                 observerDebounceTimer = setTimeout(function() {
                     observerDebounceTimer = null;
                     sendUpdate();
-                }, 300);
+                }, 100);
             }
+
+            // Hook tar1090's own refresh: push the instant the site updates the panel
+            var hookTry = setInterval(function() {
+                if (window._skyfoxRefreshHooked) { clearInterval(hookTry); return; }
+                if (typeof refreshSelected === 'function') {
+                    var _origRefreshSelected = refreshSelected;
+                    refreshSelected = function() {
+                        var r = _origRefreshSelected.apply(this, arguments);
+                        sendUpdate();
+                        return r;
+                    };
+                    window._skyfoxRefreshHooked = true;
+                    clearInterval(hookTry);
+                }
+            }, 500);
 
             // MutationObserver for selection/deselection changes
             new MutationObserver(function() {
@@ -332,10 +347,10 @@ internal fun WebView.setupAircraftDetailsExtraction() {
                 childList: true, subtree: true, characterData: true
             });
 
-            // Polling for real-time updates (position, altitude, speed)
+            // ponytail: poll is only a safety net now; refreshSelected hook does the real work
             window._detailsPollInterval = setInterval(function() {
                 sendUpdate();
-            }, 1500);
+            }, 3000);
 
             window.androidDeselectSelectedAircraft = function() {
                 try {
