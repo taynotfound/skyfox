@@ -13,6 +13,19 @@ interface HexdbApi {
         @SerialName("route") val route: String? = null,
     )
 
+    @Serializable
+    data class AircraftResponse(
+        @SerialName("ModeS") val modeS: String? = null,
+        @SerialName("Registration") val registration: String? = null,
+        @SerialName("Manufacturer") val manufacturer: String? = null,
+        @SerialName("ICAOTypeCode") val icaoTypeCode: String? = null,
+        @SerialName("Type") val type: String? = null,
+        @SerialName("RegisteredOwners") val registeredOwners: String? = null,
+    )
+
     @GET("api/v1/route/icao/{callsign}")
     suspend fun getByCallsign(@Path("callsign") callsign: String): RouteResponse
+
+    @GET("api/v1/aircraft/{hex}")
+    suspend fun getAircraft(@Path("hex") hex: String): AircraftResponse
 }

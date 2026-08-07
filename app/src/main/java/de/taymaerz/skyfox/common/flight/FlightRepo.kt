@@ -40,7 +40,22 @@ class FlightRepo @Inject constructor(
         val info = try {
             adsbdbEndpoint.getAircraft(key)
         } catch (e: Exception) {
-            log(TAG, WARN) { "aircraftInfo($key) failed: $e" }
+            log(TAG, WARN) { "aircraftInfo($key) adsbdb failed: $e" }
+            null
+        } ?: try {
+            // fallback: hexdb aircraft DB
+            hexdbEndpoint.getAircraft(key)?.let {
+                de.taymaerz.skyfox.common.flight.api.AdsbdbApi.AircraftData(
+                    type = it.type,
+                    icaoType = it.icaoTypeCode,
+                    manufacturer = it.manufacturer,
+                    modeS = it.modeS,
+                    registration = it.registration,
+                    owner = it.registeredOwners,
+                )
+            }
+        } catch (e: Exception) {
+            log(TAG, WARN) { "aircraftInfo($key) hexdb failed: $e" }
             return null // don't cache failures
         }
         if (aircraftInfoCache.size > 200) aircraftInfoCache.clear()

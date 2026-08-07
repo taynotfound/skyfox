@@ -38,6 +38,12 @@ class HexdbEndpoint @Inject constructor(
         if (response.route.isNullOrBlank()) null else response
     }
 
+    suspend fun getAircraft(hex: String): HexdbApi.AircraftResponse? = withContext(dispatcherProvider.IO) {
+        log(TAG) { "getAircraft(hex=$hex)" }
+        val response = api.getAircraft(hex)
+        if (response.registration.isNullOrBlank() && response.type.isNullOrBlank()) null else response
+    }
+
     companion object {
         private val TAG = logTag("Flight", "Hexdb", "Endpoint")
     }

@@ -49,7 +49,7 @@ class SettingsIndexViewModel @Inject constructor(
     }
 
     fun goUpstreamDiscord() {
-        webpageTool.open("https://discord.gg/ENtVkMHqZg")
+        webpageTool.open("https://discord.gg/m8XQAxMbT")
     }
 
     fun goSponsor() = launch {
