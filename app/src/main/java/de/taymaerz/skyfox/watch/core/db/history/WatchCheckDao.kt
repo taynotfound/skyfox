@@ -17,6 +17,9 @@ interface WatchCheckDao {
     @Query("SELECT * FROM watch_checks WHERE watch_id = :watchId AND aircraft_count > 0 ORDER BY checked_at DESC LIMIT 1")
     suspend fun getLastHit(watchId: String): WatchCheckEntity?
 
+    @Query("SELECT * FROM watch_checks ORDER BY checked_at DESC")
+    fun observeAll(): Flow<List<WatchCheckEntity>>
+
     @Query("SELECT * FROM watch_checks")
     suspend fun getAll(): List<WatchCheckEntity>
 

@@ -11,7 +11,6 @@ import de.taymaerz.skyfox.search.ui.DestinationSearch
 import de.taymaerz.skyfox.watch.core.db.WatchDatabase
 import de.taymaerz.skyfox.watch.core.db.history.WatchCheckDao
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -55,7 +54,7 @@ class StatsViewModel @Inject constructor(
     )
 
     val state = combine(
-        flow { emit(dao.getAll()) },
+        dao.observeAll(),
         aircraftRepo.aircraft,
     ) { checks, aircraftMap ->
         val zone = ZoneId.systemDefault()
