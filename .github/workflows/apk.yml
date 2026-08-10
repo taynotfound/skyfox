@@ -65,7 +65,7 @@ jobs:
               "content": f"SkyFox nightly **{status}** · `{sha}` · [GitHub Actions run]({run_url})"
           }, open("/tmp/discord-payload.json", "w"))
           PY
-          curl --fail --silent --show-error \
+          curl --silent --show-error \
             -H 'Content-Type: application/json' \
             --data-binary @/tmp/discord-payload.json \
-            "${DISCORD_WEBHOOK_URL}"
+            "${DISCORD_WEBHOOK_URL}" || echo "Discord notification failed; continuing without blocking CI."
