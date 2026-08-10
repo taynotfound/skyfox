@@ -111,6 +111,51 @@ jobs:
             echo "RELEASE_TAG=nightly" >> "$GITHUB_ENV"
           fi
 
+      - name: Record screenshots
+        if: env.RELEASE_TYPE == 'release'
+        env:
+          STORE_PATH: /tmp/skyfox.jks
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew :app:recordFossDebugScreenshotTest
+
+      - name: Push screenshots to website
+        if: env.RELEASE_TYPE == 'release'
+        env:
+          WEBSITE_DEPLOY_KEY: ${{ secrets.WEBSITE_DEPLOY_KEY }}
+        run: |
+          SRC="app/build/outputs/screenshotTest/fossDebug/record/de/taymaerz/skyfox/screenshots/PlayStoreScreenshotsKt"
+          python3 - <<'PY'
+          import shutil, os
+          from pathlib import Path
+          src = Path(os.environ.get("SRC", "app/build/outputs/screenshotTest/fossDebug/record/de/taymaerz/skyfox/screenshots/PlayStoreScreenshotsKt"))
+          screen_map = {"Map": "map", "Search": "search", "Watch": "watch", "PlaneDetails": "plane-details"}
+          locale_map = {"de-DE": "de", "en-US": "en", "es-ES": "es", "fr-FR": "fr", "it-IT": "it"}
+          out = Path("/tmp/ws")
+          for png in src.glob("*.png"):
+              parts = png.stem.split("_", 1)
+              if len(parts) < 2: continue
+              screen = screen_map.get(parts[0])
+              locale_dir = locale_map.get(parts[1].split("_")[0])
+              if screen and locale_dir:
+                  dest = out / locale_dir / f"{screen}.png"
+                  dest.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copy2(png, dest)
+          PY
+          mkdir -p ~/.ssh
+          echo "${WEBSITE_DEPLOY_KEY}" > ~/.ssh/dk && chmod 600 ~/.ssh/dk
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/dk -o StrictHostKeyChecking=no" \
+            git clone git@github.com:taynotfound/skyfox-website.git /tmp/ws-repo
+          cp -r /tmp/ws/. /tmp/ws-repo/assets/screenshots/
+          cd /tmp/ws-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/screenshots/
+          git diff --cached --quiet && exit 0
+          git commit -m "auto: screenshots from ${RELEASE_TAG}"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/dk -o StrictHostKeyChecking=no" git push
+
       - name: Notify Discord
         if: always()
         env:
