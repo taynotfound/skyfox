@@ -45,7 +45,7 @@ class SettingsIndexViewModel @Inject constructor(
     }
 
     fun goUpstreamRepo() {
-        webpageTool.open("https://github.com/d4rken-org/airplanes-live-app")
+        webpageTool.open("https://airplanes.live")
     }
 
     fun goUpstreamDiscord() {

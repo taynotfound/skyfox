@@ -28,7 +28,7 @@
 
     <string name="common_unavailable_label">N/A</string>
     <string name="common_sponsor_action">Sponsor development</string>
-    <string name="common_sponsor_description">Sponsor d4rken on GitHub — he built the app this fork is based on.</string>
+    <string name="common_sponsor_description">Support SkyFox development and future improvements.</string>
 
     <string name="common_last_seen_label">Last seen</string>
     <string name="common_registration_label">Registration</string>
@@ -72,8 +72,8 @@
     <string name="map_aircraft_details_registration_label">Registration</string>
     <string name="settings_category_upstream_label">Original developer</string>
     <string name="settings_upstream_repo_label">Upstream: airplanes.live app</string>
-    <string name="settings_upstream_repo_desc">By d4rken — SkyFox is a fork of his work (GPL-3.0).</string>
-    <string name="settings_upstream_discord_label">darken\'s Discord</string>
+    <string name="settings_upstream_repo_desc">Based on the airplanes.live Android app by d4rken (GPL-3.0).</string>
+    <string name="settings_upstream_discord_label">Community Discord</string>
     <string name="settings_upstream_discord_desc">Community of the original developer</string>
     <string name="settings_fork_repo_label">This fork</string>
     <string name="settings_fork_repo_desc">prettier-airplanes-live by Tay März</string>

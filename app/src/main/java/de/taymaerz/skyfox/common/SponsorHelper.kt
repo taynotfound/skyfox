@@ -9,6 +9,6 @@ class SponsorHelper @Inject constructor(
 ) {
 
     suspend fun openSponsorPage() {
-        webpageTool.open("https://github.com/sponsors/d4rken")
+        webpageTool.open("https://github.com/taynotfound/skyfox")
     }
 }

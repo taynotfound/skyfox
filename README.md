@@ -1,33 +1,43 @@
-<img src="app/src/main/ic_launcher-playstore.png" width="128">
+<p align="center">
+  <img src="branding/skyfox-logo.svg" width="160" alt="SkyFox logo">
+</p>
 
-# SkyFox 🦊✈️
+<h1 align="center">SkyFox</h1>
 
-> Live flight tracking using [airplanes.live](https://airplanes.live) data — by **Tay März** ([@taynotfound](https://github.com/taynotfound)). Based on [d4rken-org/airplanes-live-app](https://github.com/d4rken-org/airplanes-live-app).
->
-> SkyFox is an independent project — not affiliated with or endorsed by airplanes.live.
+<p align="center">A fast, privacy-friendly flight tracker for Android.</p>
 
-## What's new in SkyFox
+<p align="center">
+  <a href="https://github.com/taynotfound/skyfox/releases">Download the latest APK</a> ·
+  <a href="https://github.com/taynotfound/skyfox/actions">Builds</a>
+</p>
 
-* **Stats screen** — spotting streaks, busiest hour/day, unique aircraft, 14-day activity chart, top 10 most-seen aircraft with photos, shareable summary
-* **Map layer switcher** — change the OpenStreetMap base layer right from the map or in settings
-* **Start location** — set a home location the map opens on
-* **Richer route info** — airline names and origin/destination cities on aircraft details
-* **Smoother aircraft popups** — reworked map hooks for less lag
-* More coming.
+SkyFox uses [airplanes.live](https://airplanes.live) data to show nearby aircraft without requiring an account. It is an independent project and is not affiliated with or endorsed by airplanes.live.
 
-## Core features
+## Features
 
-* View aircraft on map
-* Search for aircraft by HEX, callsign, registration, airframe or SQUAWK code
-* Flight route information with origin and destination airports
-* ICAO / callsign / SQUAWK / location alerts
-* Feeder monitoring with offline notifications
-* Aircraft photos via planespotters.net
+- Live aircraft map with selectable map layers
+- Search by HEX, callsign, registration, airframe, or SQUAWK
+- Route information with origin and destination airports
+- ICAO, callsign, SQUAWK, and location alerts
+- Feeder monitoring with offline notifications
+- Aircraft photos from Planespotters
+- Watchlists, spotting statistics, and shareable summaries
+- Start location and responsive aircraft details
 
-## Installation
+## Download
 
-Grab the latest APK from [Releases](https://github.com/taynotfound/skyfox/releases). Every push to `main` also builds an APK artifact via GitHub Actions.
+The latest FOSS debug APK is attached to the [`nightly` release](https://github.com/taynotfound/skyfox/releases/tag/nightly). Every push to `main` builds and replaces that release automatically. Build status and commit details are posted to Discord.
+
+## Build locally
+
+```bash
+./gradlew :app:assembleFossDebug
+```
+
+The APK is written to `app/build/outputs/apk/foss/debug/`.
 
 ## Credits
 
-SkyFox is based on the excellent [airplanes.live app](https://github.com/d4rken-org/airplanes-live-app) by [d4rken](https://github.com/d4rken). License terms of the original project apply — see [LICENSE](LICENSE).
+SkyFox is based on the [airplanes.live Android app](https://github.com/d4rken-org/airplanes-live-app) by d4rken. License terms for the original project apply; see [LICENSE](LICENSE).
+
+SkyFox is maintained by [Tay März](https://github.com/taynotfound).
