@@ -34,7 +34,7 @@ declare -A SCREEN_MAP=(
     [Map]="1_map"
     [Search]="2_search"
     [Watch]="3_watch"
-    [Feeders]="4_feeders"
+    [PlaneDetails]="4_plane_details"
 )
 
 if [[ ! -d "$REFERENCE_DIR" ]]; then

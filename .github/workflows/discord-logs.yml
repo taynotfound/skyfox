@@ -48,14 +48,14 @@ jobs:
               lines += [f"Commit: [`{sha}`](<{commit_url}>)", f"Message: {message or '(no commit message)'}"]
           elif kind == "pull_request":
               pr = event.get("pull_request") or {}
-              lines += [f"PR #{pr.get('number', event.get('number', '?'))}: [{pr.get('title', '(untitled)')}] <{pr.get('html_url', '')}>"]
+              lines += [f"PR #{pr.get('number', event.get('number', '?'))}: [{pr.get('title', '(untitled)')}](<{pr.get('html_url', '')}>)"]
           elif kind == "issues":
               issue = event.get("issue") or {}
-              lines += [f"Issue #{issue.get('number', '?')}: {issue.get('title', '(untitled)')} <{issue.get('html_url', '')}>"]
+              lines += [f"Issue #{issue.get('number', '?')}: {issue.get('title', '(untitled)')} (<{issue.get('html_url', '')}>)"]
           elif kind == "issue_comment":
               issue = event.get("issue") or {}
               body = (event.get("comment") or {}).get("body", "").replace("\n", " ")[:300]
-              lines += [f"Issue #{issue.get('number', '?')}: {issue.get('title', '(untitled)')} <{issue.get('html_url', '')}>", f"Comment: {body}"]
+              lines += [f"Issue #{issue.get('number', '?')}: {issue.get('title', '(untitled)')} (<{issue.get('html_url', '')}>)", f"Comment: {body}"]
           elif kind == "workflow_run":
               workflow = event.get("workflow_run") or {}
               commit = workflow.get("head_commit") or {}
