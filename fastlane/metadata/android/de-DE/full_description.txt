@@ -1,11 +1,18 @@
-Diese Android-App verbindet Sie mit airplanes.live für Echtzeit-Flugverfolgung und Überwachung.
+SkyFox ist ein kostenloser Open-Source-Flugtracker für Android, entwickelt für Luftfahrtbegeisterte und Planespotter.
 
-**Features:**
-- Flugzeuge auf interaktiver Karte anzeigen
-- Flugzeuge nach HEX, Registrierung, Flugzeugtyp oder SQUAWK-Code durchsuchen
-- Benachrichtigungen erhalten, wenn Feeder offline gehen
-- Schnellkürzel auf der Karte für spezifische Feeder-Standorte
-- SQUAWK-Code-Benachrichtigungen mit benutzerdefinierten Mitteilungen
-- ICAO-Kennzeichen-Benachrichtigungen für spezifische Flugzeuge
+Verfolge Flugzeuge in Echtzeit auf einer interaktiven Karte. Suche nach Rufzeichen, Kennung, HEX oder SQUAWK. Erstelle Beobachtungslisten und erhalte Benachrichtigungen für bestimmte Flugzeuge, Rufzeichen, Squawk-Codes oder Standorte.
 
-Verfolgen Sie Flüge, überwachen Sie die Luftfahrtaktivität und bleiben Sie mit umfassenden Such- und Benachrichtigungsfunktionen mit dem airplanes.live-Netzwerk verbunden.
+Funktionen:
+• Live-Flugzeugkarte mit auswählbaren Kartenebenen
+• Suche nach HEX/ICAO, Rufzeichen, Kennung, Flugzeugtyp oder SQUAWK
+• Routeninformationen mit Abflug- und Zielflughäfen
+• Flugzeug-, Rufzeichen-, SQUAWK- und Standortalarme
+• Notfall-SQUAWK-Alarme (7500, 7600, 7700)
+• Feeder-Überwachung mit Offline-Benachrichtigungen
+• Flugzeugfotos wo verfügbar
+• Beobachtungslisten, Spotting-Statistiken und teilbare Zusammenfassungen
+• Kein Konto erforderlich. Keine Werbung.
+
+Flugzeugdaten werden von airplanes.live bereitgestellt. SkyFox ist ein unabhängiges Projekt und steht in keiner Verbindung zu airplanes.live.
+
+SkyFox basiert auf der airplanes.live Android-App von d4rken, verwendet unter der GPL-Lizenz.

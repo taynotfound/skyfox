@@ -129,8 +129,8 @@
     <string name="acks_planespotters_desc">Merci de fournir les images d\'aéronefs.</string>
     <string name="acks_route_data_desc">Merci de fournir les données des routes de vol.</string>
 
-    <string name="welcome_body1">Ceci est une application compagnon pour les membres de la communauté airplanes.live !</string>
-    <string name="welcome_body2">airplanes.live est un suivi de vol communautaire avec des contributeurs dans le monde entier. Il fournit un accès ouvert et non filtré aux données de trafic aérien mondial.</string>
+    <string name="welcome_body1">SkyFox — tracker de vols gratuit et open source pour Android.</string>
+    <string name="welcome_body2">Les données des aéronefs sont fournies par airplanes.live, un réseau de suivi de vols communautaire avec des feeders dans le monde entier. SkyFox est indépendant et n'est pas affilié à airplanes.live.</string>
     <string name="welcome_body3">Envisagez de contribuer des données.</string>
 
     <string name="privacy_body1">Cette application ne collecte ni ne vend les données des utilisateurs.</string>

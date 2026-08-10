@@ -71,7 +71,7 @@
     <string name="map_aircraft_details_owner_country_label">Country</string>
     <string name="map_aircraft_details_registration_label">Registration</string>
     <string name="settings_category_upstream_label">Original developer</string>
-    <string name="settings_upstream_repo_label">Upstream: airplanes.live app</string>
+    <string name="settings_upstream_repo_label">Based on airplanes.live app by d4rken (GPL)</string>
     <string name="settings_upstream_repo_desc">Based on the airplanes.live Android app by d4rken (GPL-3.0).</string>
     <string name="settings_upstream_discord_label">Community Discord</string>
     <string name="settings_upstream_discord_desc">Community of the original developer</string>
@@ -143,8 +143,8 @@
     <string name="acks_planespotters_desc">Thanks for providing the aircraft images.</string>
     <string name="acks_route_data_desc">Thanks for providing the flight route data.</string>
 
-    <string name="welcome_body1">SkyFox is an independent flight tracking app. It is not affiliated with or endorsed by airplanes.live.</string>
-    <string name="welcome_body2">Flight data comes from airplanes.live, a community-driven network of feeders providing open, unfiltered access to worldwide air traffic data.</string>
+    <string name="welcome_body1">SkyFox — free, open-source flight tracker for Android.</string>
+    <string name="welcome_body2">Aircraft data is provided by airplanes.live, a community-driven flight network with feeders around the world. SkyFox is independent and not affiliated with airplanes.live.</string>
     <string name="welcome_body3">Consider contributing data.</string>
 
     <string name="privacy_body1">This app does not collect or sell user data.</string>

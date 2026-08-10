@@ -1,11 +1,18 @@
-Questa app Android ti connette a airplanes.live per il tracciamento e il monitoraggio di aeromobili in tempo reale.
+SkyFox è un tracker di voli gratuito e open source per Android, pensato per gli appassionati di aviazione e gli spotter.
 
-**Funzionalità:**
-- Visualizza gli aeromobili su una mappa interattiva
-- Cerca aeromobili per HEX, registrazione, matricola o codice SQUAWK
-- Ricevi notifiche quando i feeder vanno offline
-- Scorciatoie rapide sulla mappa per le posizioni specifiche dei feeder
-- Avvisi del codice SQUAWK con notifiche personalizzate
-- Avvisi di identificatori ICAO per aeromobili specifici
+Traccia gli aeromobili nelle vicinanze in tempo reale su una mappa interattiva. Cerca per indicativo, immatricolazione, HEX o SQUAWK. Crea liste di sorveglianza e ricevi avvisi per aeromobili, indicativi, codici squawk o posizioni specifici.
 
-Monitora i voli, tieni traccia dell'attività dell'aviazione e rimani connesso alla rete airplanes.live con funzionalità complete di ricerca e avviso.
+Funzionalità:
+• Mappa degli aeromobili in diretta con livelli di mappa selezionabili
+• Ricerca per HEX/ICAO, indicativo, immatricolazione, tipo o SQUAWK
+• Informazioni sul percorso con aeroporti di origine e destinazione
+• Avvisi per aeromobile, indicativo, SQUAWK e posizione
+• Avvisi squawk di emergenza (7500, 7600, 7700)
+• Monitoraggio feeder con notifiche offline
+• Foto degli aeromobili dove disponibili
+• Liste di sorveglianza, statistiche di spotting e riepiloghi condivisibili
+• Nessun account richiesto. Nessuna pubblicità.
+
+I dati degli aeromobili sono forniti da airplanes.live. SkyFox è un progetto indipendente e non è affiliato ad airplanes.live.
+
+SkyFox è basato sull'app Android airplanes.live di d4rken, utilizzata sotto licenza GPL.

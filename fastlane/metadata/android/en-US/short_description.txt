@@ -1,1 +1,1 @@
-airplanes.live Android app - For aviation enthusiasts
+Free open-source flight tracker for plane spotters
