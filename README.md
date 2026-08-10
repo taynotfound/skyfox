@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="branding/skyfox-logo.svg" width="160" alt="SkyFox logo">
+  <img src="SkyFox_Logo.svg" width="160" alt="SkyFox logo">
 </p>
 
 <h1 align="center">SkyFox</h1>
