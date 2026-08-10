@@ -337,7 +337,7 @@
     <string name="map_aircraft_details_squawk_7500">Entführung</string>
     <string name="map_aircraft_details_squawk_7600">Funkausfall</string>
     <string name="map_aircraft_details_squawk_7700">Notfall</string>
-    <string name="map_aircraft_details_squawk_banner">SQUAWK %1$s — %2$s</string>
+    <string name="map_aircraft_details_squawk_banner">SQUAWK %1$s: %2$s</string>
 
     <string name="map_sidebar_toggle_action">Flugzeugliste</string>
     <plurals name="map_sidebar_total_x">
@@ -470,7 +470,7 @@
     <string name="search_mode_chip_airframe">Flugzeugzelle</string>
     <string name="search_mode_chip_interesting">Interessant</string>
     <string name="search_mode_chip_position">Standort</string>
-    <string name="search_error_rate_limited">Zu viele Anfragen – einige Ergebnisse fehlen möglicherweise</string>
+    <string name="search_error_rate_limited">Zu viele Anfragen, einige Ergebnisse fehlen möglicherweise</string>
     <string name="search_error_generic">Suchfehler: %s</string>
 
     <string name="common_show_on_map">Auf Karte anzeigen</string>

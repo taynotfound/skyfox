@@ -336,7 +336,7 @@
     <string name="map_aircraft_details_squawk_7500">Secuestro</string>
     <string name="map_aircraft_details_squawk_7600">Fallo de radio</string>
     <string name="map_aircraft_details_squawk_7700">Emergencia</string>
-    <string name="map_aircraft_details_squawk_banner">SQUAWK %1$s — %2$s</string>
+    <string name="map_aircraft_details_squawk_banner">SQUAWK %1$s: %2$s</string>
 
     <string name="map_sidebar_toggle_action">Lista de aeronaves</string>
     <plurals name="map_sidebar_total_x">

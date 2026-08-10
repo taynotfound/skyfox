@@ -375,7 +375,7 @@
     <string name="map_aircraft_details_squawk_7500">Hijack</string>
     <string name="map_aircraft_details_squawk_7600">Radio Failure</string>
     <string name="map_aircraft_details_squawk_7700">Emergency</string>
-    <string name="map_aircraft_details_squawk_banner">SQUAWK %1$s — %2$s</string>
+    <string name="map_aircraft_details_squawk_banner">SQUAWK %1$s: %2$s</string>
 
     <string name="map_sidebar_toggle_action">Aircraft list</string>
     <plurals name="map_sidebar_total_x">

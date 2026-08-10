@@ -336,7 +336,7 @@
     <string name="map_aircraft_details_squawk_7500">Dirottamento</string>
     <string name="map_aircraft_details_squawk_7600">Guasto radio</string>
     <string name="map_aircraft_details_squawk_7700">Emergenza</string>
-    <string name="map_aircraft_details_squawk_banner">SQUAWK %1$s — %2$s</string>
+    <string name="map_aircraft_details_squawk_banner">SQUAWK %1$s: %2$s</string>
 
     <string name="map_sidebar_toggle_action">Lista aeromobili</string>
     <plurals name="map_sidebar_total_x">
