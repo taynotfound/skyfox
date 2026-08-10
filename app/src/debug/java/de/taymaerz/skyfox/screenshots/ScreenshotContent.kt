@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.taymaerz.skyfox.R
 import de.taymaerz.skyfox.common.compose.BottomNavBar
+import de.taymaerz.skyfox.map.ui.DestinationMap
 import de.taymaerz.skyfox.common.compose.aplContentWindowInsets
 import de.taymaerz.skyfox.common.compose.preview.FakeAircraft
 import de.taymaerz.skyfox.common.navigation.LocalNavigationController
@@ -137,7 +138,7 @@ internal fun MapContent() {
                     },
                 )
             },
-            bottomBar = { BottomNavBar(selectedTab = 0) },
+            bottomBar = { BottomNavBar(destination = DestinationMap()) },
         ) { contentPadding ->
             Box(
                 modifier = Modifier
