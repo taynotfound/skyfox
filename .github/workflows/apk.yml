@@ -118,7 +118,7 @@ jobs:
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew :app:recordFossDebugScreenshotTest
+        run: ./gradlew :app:updateFossDebugScreenshotTest
 
       - name: Push screenshots to website
         if: env.RELEASE_TYPE == 'release'
@@ -129,7 +129,7 @@ jobs:
           python3 - <<'PY'
           import shutil, os
           from pathlib import Path
-          src = Path(os.environ.get("SRC", "app/build/outputs/screenshotTest/fossDebug/record/de/taymaerz/skyfox/screenshots/PlayStoreScreenshotsKt"))
+          src = Path(os.environ.get("SRC", "app/src/screenshotTest/reference"))
           screen_map = {"Map": "map", "Search": "search", "Watch": "watch", "PlaneDetails": "plane-details"}
           locale_map = {"de-DE": "de", "en-US": "en", "es-ES": "es", "fr-FR": "fr", "it-IT": "it"}
           out = Path("/tmp/ws")
