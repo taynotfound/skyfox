@@ -11,7 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 @Preview(name = "es-ES", locale = "es", device = DS)
 @Preview(name = "fr-FR", locale = "fr", device = DS)
 @Preview(name = "it-IT", locale = "it", device = DS)
-@Preview(name = "ru-RU", locale = "ru", device = DS)
 annotation class PlayStoreLocales
 
 @Retention(AnnotationRetention.BINARY)

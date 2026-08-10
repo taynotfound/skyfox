@@ -21,4 +21,4 @@ fun Watch() = WatchContent()
 @PreviewTest
 @PlayStoreLocales
 @Composable
-fun Feeders() = FeederContent()
+fun PlaneDetails() = PlaneDetailsContent()

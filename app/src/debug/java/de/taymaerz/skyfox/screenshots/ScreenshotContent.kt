@@ -38,15 +38,13 @@ import de.taymaerz.skyfox.common.compose.BottomNavBar
 import de.taymaerz.skyfox.map.ui.DestinationMap
 import de.taymaerz.skyfox.common.compose.aplContentWindowInsets
 import de.taymaerz.skyfox.common.compose.preview.FakeAircraft
+import de.taymaerz.skyfox.common.compose.preview.mockFlightRoute
 import de.taymaerz.skyfox.common.navigation.LocalNavigationController
 import de.taymaerz.skyfox.common.navigation.NavigationController
 import de.taymaerz.skyfox.common.theming.AplTheme
 import de.taymaerz.skyfox.common.theming.ThemeMode
-import de.taymaerz.skyfox.feeder.core.config.FeederSortMode
-import de.taymaerz.skyfox.feeder.ui.FeederListScreen
-import de.taymaerz.skyfox.feeder.ui.FeederListViewModel
-import de.taymaerz.skyfox.feeder.ui.preview.mockFeeder
 import de.taymaerz.skyfox.main.core.ThemeState
+import de.taymaerz.skyfox.main.ui.AircraftDetails
 import de.taymaerz.skyfox.search.ui.SearchScreen
 import de.taymaerz.skyfox.search.ui.SearchViewModel
 import de.taymaerz.skyfox.watch.core.WatchSortMode
@@ -300,6 +298,17 @@ internal fun FeederContent() {
     }
 }
 
+@Composable
+internal fun PlaneDetailsContent() {
+    ScreenshotWrapper {
+        AircraftDetails(
+            aircraft = mockAircraft1,
+            route = mockFlightRoute(),
+            distanceInMeter = 42_000f,
+        )
+    }
+}
+
 @Preview(name = "Map", device = DS)
 @Composable
 private fun MapPreview() = MapContent()
@@ -312,6 +321,6 @@ private fun SearchPreview() = SearchContent()
 @Composable
 private fun WatchPreview() = WatchContent()
 
-@Preview(name = "Feeders", device = DS)
+@Preview(name = "Plane details", device = DS)
 @Composable
-private fun FeedersPreview() = FeederContent()
+private fun PlaneDetailsPreview() = PlaneDetailsContent()

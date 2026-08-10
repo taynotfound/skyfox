@@ -610,4 +610,27 @@
         <item>🌍 Capa incorrecta.</item>
         <item>🚫✈️ Sin datos de vuelo por debajo del nivel de las rodillas.</item>
     </string-array>
+    <string name="common_track_label">Rumbo</string>
+    <string name="common_vertical_rate_label">Velocidad vertical</string>
+    <string name="map_aircraft_details_manufacturer_label">Fabricante</string>
+    <string name="map_aircraft_details_owner_country_label">País del propietario</string>
+    <string name="map_aircraft_details_owner_label">Propietario</string>
+    <string name="map_aircraft_details_registration_label">Matrícula</string>
+    <string name="map_aircraft_details_section_registry">Datos del registro</string>
+    <string name="map_aircraft_details_type_label">Tipo</string>
+    <string name="map_settings_home_location_clear_action">Borrar ubicación de casa</string>
+    <string name="map_settings_home_location_dialog_hint">Introduce latitud y longitud</string>
+    <string name="map_settings_home_location_lat_label">Latitud</string>
+    <string name="map_settings_home_location_lon_label">Longitud</string>
+    <string name="map_settings_home_location_summary">Se usa para la distancia y el centrado del mapa</string>
+    <string name="map_settings_home_location_title">Ubicación de casa</string>
+    <string name="settings_category_upstream_label">Upstream</string>
+    <string name="settings_fork_repo_desc">Código fuente de este fork</string>
+    <string name="settings_fork_repo_label">Repositorio del fork</string>
+    <string name="settings_upstream_discord_desc">Comunidad del proyecto original</string>
+    <string name="settings_upstream_discord_label">Discord upstream</string>
+    <string name="settings_upstream_repo_desc">Repositorio del proyecto original</string>
+    <string name="settings_upstream_repo_label">Repositorio upstream</string>
+    <string name="stats_page_label">Estadísticas</string>
+    <string name="ui_theme_color_fox_label">Fox</string>
 </resources>

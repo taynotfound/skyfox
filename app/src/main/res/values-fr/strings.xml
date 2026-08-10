@@ -610,4 +610,27 @@
         <item>🌍 Mauvaise couche.</item>
         <item>🚫✈️ Pas de données de vol en dessous du niveau des genoux.</item>
     </string-array>
+    <string name="common_track_label">Cap</string>
+    <string name="common_vertical_rate_label">Vitesse verticale</string>
+    <string name="map_aircraft_details_manufacturer_label">Constructeur</string>
+    <string name="map_aircraft_details_owner_country_label">Pays du propriétaire</string>
+    <string name="map_aircraft_details_owner_label">Propriétaire</string>
+    <string name="map_aircraft_details_registration_label">Immatriculation</string>
+    <string name="map_aircraft_details_section_registry">Données du registre</string>
+    <string name="map_aircraft_details_type_label">Type</string>
+    <string name="map_settings_home_location_clear_action">Effacer le lieu de référence</string>
+    <string name="map_settings_home_location_dialog_hint">Saisissez la latitude et la longitude</string>
+    <string name="map_settings_home_location_lat_label">Latitude</string>
+    <string name="map_settings_home_location_lon_label">Longitude</string>
+    <string name="map_settings_home_location_summary">Utilisé pour la distance et le centrage de la carte</string>
+    <string name="map_settings_home_location_title">Lieu de référence</string>
+    <string name="settings_category_upstream_label">Upstream</string>
+    <string name="settings_fork_repo_desc">Code source de ce fork</string>
+    <string name="settings_fork_repo_label">Dépôt du fork</string>
+    <string name="settings_upstream_discord_desc">Communauté du projet d’origine</string>
+    <string name="settings_upstream_discord_label">Discord upstream</string>
+    <string name="settings_upstream_repo_desc">Dépôt du projet d’origine</string>
+    <string name="settings_upstream_repo_label">Dépôt upstream</string>
+    <string name="stats_page_label">Statistiques</string>
+    <string name="ui_theme_color_fox_label">Fox</string>
 </resources>
