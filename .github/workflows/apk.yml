@@ -83,29 +83,56 @@ jobs:
             TITLE="SkyFox ${MAJOR}.${MINOR}.${PATCH}"
             git tag "$TAG" || true
             git push origin "$TAG" || true
+
+            # Build rich changelog from commits since last tag
+            PREV=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || echo "")
+            {
+              echo "## What's changed"
+              echo
+              if [[ -n "$PREV" ]]; then
+                git log "${PREV}..${GITHUB_SHA}" --pretty=format:"%h %s (%an)" --no-merges | while IFS= read -r line; do
+                  HASH="${line%% *}"
+                  REST="${line#* }"
+                  echo "- [\`$HASH\`](https://github.com/${GITHUB_REPOSITORY}/commit/$HASH) $REST"
+                done
+              else
+                echo "- Initial release."
+              fi
+              echo
+              echo "---"
+              echo "**Full diff:** [\`${PREV}...${TAG}\`](https://github.com/${GITHUB_REPOSITORY}/compare/${PREV}...${TAG})"
+              echo
+              echo "📦 Install \`skyfox-release.apk\` below — requires Android 8.0+"
+            } > notes.md
+
             gh release create "$TAG" skyfox-release.apk \
-              --title "$TITLE" \
-              --generate-notes
+              --title "SkyFox $EXPLICIT_VERSION" \
+              --notes-file notes.md
             echo "RELEASE_TYPE=release" >> "$GITHUB_ENV"
             echo "RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
           else
-            # ponytail: rolling nightly — delete+recreate keeps one prerelease slot
             gh release delete nightly --yes --cleanup-tag 2>/dev/null || true
             PREV=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || echo "")
             {
-              echo "### Changes"
+              echo "## What's changed"
               echo
               if [[ -n "$PREV" ]]; then
-                git log "${PREV}..${GITHUB_SHA}" --pretty=format:"* %s" --no-merges \
-                  | grep -v "^* bump" || echo "* Routine updates."
+                git log "${PREV}..${GITHUB_SHA}" --pretty=format:"%h %s (%an)" --no-merges | while IFS= read -r line; do
+                  HASH="${line%% *}"
+                  REST="${line#* }"
+                  echo "- [\`$HASH\`](https://github.com/${GITHUB_REPOSITORY}/commit/$HASH) $REST"
+                done
               else
-                echo "* Initial or untracked changes."
+                echo "- Initial or untracked changes."
               fi
               echo
-              echo "_Automated build from \`main\` @ \`${GITHUB_SHA::7}\`. May be unstable._"
+              echo "---"
+              echo "🔧 Automated build from \`main\` @ [\`${GITHUB_SHA::7}\`](https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}) — may be unstable."
+              echo
+              echo "📦 Install \`skyfox-release.apk\` below — requires Android 8.0+"
             } > notes.md
             gh release create nightly skyfox-release.apk --prerelease \
-              --title "SkyFox Nightly" \
+              --title "SkyFox Nightly (${GITHUB_SHA::7})" \
               --notes-file notes.md
             echo "RELEASE_TYPE=nightly" >> "$GITHUB_ENV"
             echo "RELEASE_TAG=nightly" >> "$GITHUB_ENV"
