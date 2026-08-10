@@ -60,7 +60,7 @@ jobs:
           IS_RELEASE=false
           EXPLICIT_VERSION=""
 
-          if [[ "$COMMIT_MSG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+): ]]; then
+          if [[ "$COMMIT_MSG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9._-]+)?): ]]; then
             IS_RELEASE=true
             EXPLICIT_VERSION="${BASH_REMATCH[1]}"
           elif [[ "$COMMIT_MSG" == release:* ]] || [[ -n "${{ github.event.inputs.release }}" ]]; then
