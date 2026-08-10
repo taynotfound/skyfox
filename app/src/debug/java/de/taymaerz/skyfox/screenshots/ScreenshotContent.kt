@@ -267,38 +267,6 @@ internal fun WatchContent() {
 }
 
 @Composable
-internal fun FeederContent() {
-    ScreenshotWrapper {
-        FeederListScreen(
-            state = FeederListViewModel.State(
-                feeders = listOf(
-                    FeederListViewModel.FeederItem(
-                        feeder = mockFeeder(label = "Home Feeder", id = "abc12"),
-                        isOffline = false,
-                    ),
-                    FeederListViewModel.FeederItem(
-                        feeder = mockFeeder(label = "Office Feeder", id = "def34"),
-                        isOffline = false,
-                    ),
-                    FeederListViewModel.FeederItem(
-                        feeder = mockFeeder(label = "Remote Station", id = "ghi56"),
-                        isOffline = true,
-                    ),
-                ),
-                feederCount = 3,
-            ),
-            onRefresh = {},
-            onAddFeeder = {},
-            onSettings = {},
-            onFeederClick = {},
-            onSortModeSelected = {},
-            onShowOnMap = {},
-            onStartFeeding = {},
-        )
-    }
-}
-
-@Composable
 internal fun PlaneDetailsContent() {
     ScreenshotWrapper {
         AircraftDetails(
