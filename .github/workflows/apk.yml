@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      release:
+        description: 'Cut a versioned release (leave empty for nightly)'
+        required: false
 
 permissions:
   contents: write
@@ -23,12 +27,14 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      # ponytail: release signing via env vars — ProjectConfig.setupCredentials reads these.
-      # Add STORE_PATH/STORE_PASSWORD/KEY_ALIAS/KEY_PASSWORD secrets to sign properly.
-      # Without secrets: Gradle falls through to unsigned, gh release upload will still work.
+      - name: Decode keystore
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+        run: echo "$KEYSTORE_B64" | base64 -d > /tmp/skyfox.jks
+
       - name: Build FOSS release APK
         env:
-          STORE_PATH: ${{ secrets.STORE_PATH }}
+          STORE_PATH: /tmp/skyfox.jks
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -39,64 +45,90 @@ jobs:
           name: skyfox-apk
           path: app/build/outputs/apk/foss/release/*.apk
 
-      # rolling "nightly" prerelease — always points at latest main build
-      - name: Update nightly release
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           APK=$(ls app/build/outputs/apk/foss/release/*.apk | head -1)
-          cp "$APK" skyfox-nightly.apk
-          gh release delete nightly --yes --cleanup-tag || true
-          {
-            echo "### Changelog"
-            echo
-            prev_tag=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || echo "")
-            if [ -n "$prev_tag" ]; then
-              git log "${prev_tag}..${GITHUB_SHA}" --pretty=format:"* %s" --no-merges | grep -v "^* bump" || echo "* Routine updates."
-            else
-              echo "* Initial or untracked changes."
-            fi
-            echo
-            echo "### Build"
-            echo
-            echo "Automated nightly build from \`main\` (${GITHUB_SHA::7}). May be unstable."
-          } > nightly-notes.md
-          gh release create nightly skyfox-nightly.apk --prerelease \
-            --title "SkyFox Nightly" \
-            --notes-file nightly-notes.md
+          cp "$APK" skyfox-release.apk
 
-      # Send a compact run log to Discord when DISCORD_WEBHOOK_URL is configured.
+          # Determine if this is a versioned release:
+          # - workflow_dispatch with non-empty input, OR
+          # - commit message starts with "release:"
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          IS_RELEASE=false
+          if [[ -n "${{ github.event.inputs.release }}" ]] || [[ "$COMMIT_MSG" == release:* ]]; then
+            IS_RELEASE=true
+          fi
+
+          if [[ "$IS_RELEASE" == "true" ]]; then
+            VERSION=$(grep 'project.versioning' version.properties \
+              | awk -F= '{print $2}' | tr '\n' '.' | sed 's/\.\s*$//' \
+              || echo "unknown")
+            # Read version from gradle properties
+            MAJOR=$(grep 'project.versioning.major' version.properties | cut -d= -f2 | tr -d '[:space:]')
+            MINOR=$(grep 'project.versioning.minor' version.properties | cut -d= -f2 | tr -d '[:space:]')
+            PATCH=$(grep 'project.versioning.patch' version.properties | cut -d= -f2 | tr -d '[:space:]')
+            BUILD=$(grep 'project.versioning.build' version.properties | cut -d= -f2 | tr -d '[:space:]')
+            TAG="v${MAJOR}.${MINOR}.${PATCH}"
+            TITLE="SkyFox ${MAJOR}.${MINOR}.${PATCH}"
+            git tag "$TAG" || true
+            git push origin "$TAG" || true
+            gh release create "$TAG" skyfox-release.apk \
+              --title "$TITLE" \
+              --generate-notes
+            echo "RELEASE_TYPE=release" >> "$GITHUB_ENV"
+            echo "RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
+          else
+            # ponytail: rolling nightly — delete+recreate keeps one prerelease slot
+            gh release delete nightly --yes --cleanup-tag 2>/dev/null || true
+            PREV=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || echo "")
+            {
+              echo "### Changes"
+              echo
+              if [[ -n "$PREV" ]]; then
+                git log "${PREV}..${GITHUB_SHA}" --pretty=format:"* %s" --no-merges \
+                  | grep -v "^* bump" || echo "* Routine updates."
+              else
+                echo "* Initial or untracked changes."
+              fi
+              echo
+              echo "_Automated build from \`main\` @ \`${GITHUB_SHA::7}\`. May be unstable._"
+            } > notes.md
+            gh release create nightly skyfox-release.apk --prerelease \
+              --title "SkyFox Nightly" \
+              --notes-file notes.md
+            echo "RELEASE_TYPE=nightly" >> "$GITHUB_ENV"
+            echo "RELEASE_TAG=nightly" >> "$GITHUB_ENV"
+          fi
+
       - name: Notify Discord
         if: always()
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          GITHUB_EVENT_PATH: ${{ github.event_path }}
           RUN_STATUS: ${{ job.status }}
         run: |
-          if [[ -z "${DISCORD_WEBHOOK_URL}" ]]; then
-            echo "DISCORD_WEBHOOK_URL is not configured; skipping Discord notification."
-            exit 0
-          fi
-          python3 - <<'PY' > /tmp/discord-payload.json
+          [[ -z "${DISCORD_WEBHOOK_URL}" ]] && exit 0
+          python3 - <<'PY'
           import json, os
-          event = json.load(open(os.environ["GITHUB_EVENT_PATH"]))
-          commit = event.get("head_commit") or {}
-          message = (commit.get("message") or "").splitlines()[0]
-          status = os.environ["RUN_STATUS"]
-          sha = os.environ["GITHUB_SHA"][:7]
-          repo = os.environ["GITHUB_REPOSITORY"]
-          commit_url = commit.get("url") or f"https://github.com/{repo}/commit/{os.environ['GITHUB_SHA']}"
+          status  = os.environ["RUN_STATUS"]
+          sha     = os.environ["GITHUB_SHA"][:7]
+          repo    = os.environ["GITHUB_REPOSITORY"]
+          rtype   = os.environ.get("RELEASE_TYPE", "nightly")
+          rtag    = os.environ.get("RELEASE_TAG", "nightly")
           run_url = f"https://github.com/{repo}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
-          content = "\n".join([
-              f"**SkyFox nightly APK: {status}**",
-              f"Commit: [`{sha}`]({commit_url})",
-              f"Message: {message or '(no commit message)'}",
-              f"[GitHub Actions run]({run_url})",
-          ])
-          json.dump({"content": content, "flags": 4}, open("/tmp/discord-payload.json", "w"))
+          rel_url = f"https://github.com/{repo}/releases/tag/{rtag}"
+          label   = "release" if rtype == "release" else "nightly"
+          icon    = "📦" if rtype == "release" else "🔧"
+          lines   = [
+            f"{icon} **SkyFox {label}: {status}** (`{sha}`)",
+            f"Release: <{rel_url}>",
+            f"Run: <{run_url}>",
+          ]
+          json.dump({"content": "\n".join(lines), "flags": 4},
+                    open("/tmp/discord-payload.json", "w"))
           PY
           curl --silent --show-error \
             -H 'Content-Type: application/json' \
             --data-binary @/tmp/discord-payload.json \
-            "${DISCORD_WEBHOOK_URL}" || echo "Discord notification failed; continuing without blocking CI."
+            "${DISCORD_WEBHOOK_URL}" || true
