@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.combine
 data class ThemeState(
     val mode: ThemeMode = ThemeMode.SYSTEM,
     val style: ThemeStyle = ThemeStyle.DEFAULT,
-    val color: ThemeColor = ThemeColor.BLUE,
+    val color: ThemeColor = ThemeColor.FOX,
 )
 
 val GeneralSettings.themeState: Flow<ThemeState>
