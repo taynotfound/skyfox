@@ -53,7 +53,7 @@ object AplColorsFox {
     val darkDefault = darkColorScheme(
         primary = Color(0xFFFB923C),
         onPrimary = Color(0xFF4A1D00),
-        primaryContainer = Color(0xFFC2570F),
+        primaryContainer = Color(0xFF9A3D0A),
         onPrimaryContainer = Color(0xFFFFEDE2),
         secondary = Color(0xFFE5C0A9),
         onSecondary = Color(0xFF432B1B),

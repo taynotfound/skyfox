@@ -220,7 +220,7 @@ fun SearchScreen(
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = { BottomNavBar(selectedTab = 1) },
+        bottomBar = { BottomNavBar(destination = DestinationSearch()) },
     ) { contentPadding ->
         BoxWithConstraints(
             modifier = Modifier

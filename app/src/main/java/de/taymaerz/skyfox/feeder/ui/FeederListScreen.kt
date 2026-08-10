@@ -57,6 +57,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import de.taymaerz.skyfox.R
 import de.taymaerz.skyfox.common.chart.Sparkline
 import de.taymaerz.skyfox.common.compose.LoadingBox
+import de.taymaerz.skyfox.common.compose.BottomNavBar
 import de.taymaerz.skyfox.common.compose.Preview2
 import de.taymaerz.skyfox.common.compose.PreviewWrapper
 import de.taymaerz.skyfox.common.compose.aplContentWindowInsets
@@ -155,6 +156,7 @@ fun FeederListScreen(
             }
         },
         
+        bottomBar = { BottomNavBar(destination = DestinationFeederList) },
     ) { contentPadding ->
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,

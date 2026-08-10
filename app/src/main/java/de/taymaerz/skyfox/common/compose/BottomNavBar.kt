@@ -18,11 +18,14 @@ import androidx.compose.material.icons.twotone.BarChart
 import androidx.compose.material.icons.twotone.Map
 import androidx.compose.material.icons.twotone.TravelExplore
 import androidx.compose.material.icons.twotone.Visibility
+import androidx.compose.material.icons.twotone.Router
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.taymaerz.skyfox.R
 import de.taymaerz.skyfox.common.navigation.LocalNavigationController
+import de.taymaerz.skyfox.common.navigation.NavigationDestination
+import de.taymaerz.skyfox.feeder.ui.DestinationFeederList
 import de.taymaerz.skyfox.map.ui.DestinationMap
 import de.taymaerz.skyfox.search.ui.DestinationSearch
 import de.taymaerz.skyfox.stats.ui.DestinationStats
@@ -32,7 +35,7 @@ val LocalIsInternetAvailable = staticCompositionLocalOf { true }
 
 @Composable
 fun BottomNavBar(
-    selectedTab: Int,
+    destination: NavigationDestination,
     modifier: Modifier = Modifier,
 ) {
     val navController = LocalNavigationController.current ?: return
@@ -53,28 +56,34 @@ fun BottomNavBar(
         }
         NavigationBar {
             NavigationBarItem(
-                selected = selectedTab == 0,
-                onClick = { if (selectedTab != 0) navController.replace(DestinationMap()) },
+                selected = destination is DestinationMap,
+                onClick = { if (destination !is DestinationMap) navController.replace(DestinationMap()) },
                 icon = { Icon(Icons.TwoTone.Map, contentDescription = null) },
                 label = { Text(stringResource(R.string.map_page_label)) },
             )
             NavigationBarItem(
-                selected = selectedTab == 1,
-                onClick = { if (selectedTab != 1) navController.replace(DestinationSearch()) },
+                selected = destination is DestinationSearch,
+                onClick = { if (destination !is DestinationSearch) navController.replace(DestinationSearch()) },
                 icon = { Icon(Icons.TwoTone.TravelExplore, contentDescription = null) },
                 label = { Text(stringResource(R.string.search_page_label)) },
             )
             NavigationBarItem(
-                selected = selectedTab == 2,
-                onClick = { if (selectedTab != 2) navController.replace(DestinationWatchList()) },
+                selected = destination is DestinationWatchList,
+                onClick = { if (destination !is DestinationWatchList) navController.replace(DestinationWatchList()) },
                 icon = { Icon(Icons.TwoTone.Visibility, contentDescription = null) },
                 label = { Text(stringResource(R.string.watch_list_page_label)) },
             )
             NavigationBarItem(
-                selected = selectedTab == 3,
-                onClick = { if (selectedTab != 3) navController.replace(DestinationStats) },
+                selected = destination is DestinationStats,
+                onClick = { if (destination !is DestinationStats) navController.replace(DestinationStats) },
                 icon = { Icon(Icons.TwoTone.BarChart, contentDescription = null) },
-                label = { Text("Stats") },
+                label = { Text(stringResource(R.string.stats_page_label)) },
+            )
+            NavigationBarItem(
+                selected = destination is DestinationFeederList,
+                onClick = { if (destination !is DestinationFeederList) navController.replace(DestinationFeederList) },
+                icon = { Icon(Icons.TwoTone.Router, contentDescription = null) },
+                label = { Text(stringResource(R.string.feeder_page_label)) },
             )
         }
     }

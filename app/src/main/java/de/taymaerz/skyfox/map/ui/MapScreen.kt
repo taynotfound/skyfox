@@ -631,7 +631,7 @@ fun MapScreenHost(
 
             // Bottom nav (hidden in fullscreen)
             if (!isFullscreen) {
-                BottomNavBar(selectedTab = 0)
+                BottomNavBar(destination = DestinationMap())
             }
         }
     }
