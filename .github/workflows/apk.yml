@@ -49,6 +49,7 @@ jobs:
         if: always()
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
           RUN_STATUS: ${{ job.status }}
         run: |
           if [[ -z "${DISCORD_WEBHOOK_URL}" ]]; then
@@ -57,13 +58,21 @@ jobs:
           fi
           python3 - <<'PY' > /tmp/discord-payload.json
           import json, os
+          event = json.load(open(os.environ["GITHUB_EVENT_PATH"]))
+          commit = event.get("head_commit") or {}
+          message = (commit.get("message") or "").splitlines()[0]
           status = os.environ["RUN_STATUS"]
           sha = os.environ["GITHUB_SHA"][:7]
           repo = os.environ["GITHUB_REPOSITORY"]
+          commit_url = commit.get("url") or f"https://github.com/{repo}/commit/{os.environ['GITHUB_SHA']}"
           run_url = f"https://github.com/{repo}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
-          json.dump({
-              "content": f"SkyFox nightly **{status}** · `{sha}` · [GitHub Actions run]({run_url})"
-          }, open("/tmp/discord-payload.json", "w"))
+          content = "\n".join([
+              f"**SkyFox nightly APK: {status}**",
+              f"Commit: [`{sha}`]({commit_url})",
+              f"Message: {message or '(no commit message)'}",
+              f"[GitHub Actions run]({run_url})",
+          ])
+          json.dump({"content": content}, open("/tmp/discord-payload.json", "w"))
           PY
           curl --silent --show-error \
             -H 'Content-Type: application/json' \

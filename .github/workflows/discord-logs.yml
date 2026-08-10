@@ -25,14 +25,7 @@ jobs:
       - name: Send event to Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          EVENT_NAME: ${{ github.event_name }}
-          EVENT_ACTION: ${{ github.event.action }}
-          ACTOR: ${{ github.actor }}
-          REPOSITORY: ${{ github.repository }}
-          SHA: ${{ github.sha }}
-          RUN_ID: ${{ github.run_id }}
-          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
-          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
         run: |
           if [[ -z "${DISCORD_WEBHOOK_URL}" ]]; then
             echo "DISCORD_WEBHOOK_URL is not configured; skipping Discord notification."
@@ -40,19 +33,36 @@ jobs:
           fi
           python3 - <<'PY' > /tmp/discord-payload.json
           import json, os
-          event = os.environ["EVENT_NAME"]
-          action = os.environ.get("EVENT_ACTION") or ""
-          actor = os.environ["ACTOR"]
-          repo = os.environ["REPOSITORY"]
-          sha = os.environ["SHA"][:7]
-          run_url = f"https://github.com/{repo}/actions/runs/{os.environ['RUN_ID']}"
-          if event == "workflow_run":
-              name = os.environ.get("WORKFLOW_NAME") or "workflow"
-              conclusion = os.environ.get("WORKFLOW_CONCLUSION") or "unknown"
-              text = f"{name}: **{conclusion}** · `{sha}` · [run]({run_url}) · @{actor}"
-          else:
-              text = f"{event}{(': ' + action) if action else ''} · `{sha}` · [run]({run_url}) · @{actor}"
-          json.dump({"content": text}, open("/tmp/discord-payload.json", "w"))
+          event = json.load(open(os.environ["GITHUB_EVENT_PATH"]))
+          kind = os.environ["GITHUB_EVENT_NAME"]
+          action = event.get("action", "")
+          repo = os.environ["GITHUB_REPOSITORY"]
+          actor = os.environ["GITHUB_ACTOR"]
+          sha = os.environ["GITHUB_SHA"][:7]
+          run_url = f"https://github.com/{repo}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+          lines = [f"**{kind}{(': ' + action) if action else ''}**", f"Repository: `{repo}`", f"Actor: @{actor}"]
+          if kind == "push":
+              commit = event.get("head_commit") or {}
+              message = (commit.get("message") or "").splitlines()[0]
+              commit_url = commit.get("url") or f"https://github.com/{repo}/commit/{os.environ['GITHUB_SHA']}"
+              lines += [f"Commit: [`{sha}`]({commit_url})", f"Message: {message or '(no commit message)'}"]
+          elif kind == "pull_request":
+              pr = event.get("pull_request") or {}
+              lines += [f"PR #{pr.get('number', event.get('number', '?'))}: [{pr.get('title', '(untitled)')}]({pr.get('html_url', '')})"]
+          elif kind == "issues":
+              issue = event.get("issue") or {}
+              lines += [f"Issue #{issue.get('number', '?')}: [{issue.get('title', '(untitled)')}]({issue.get('html_url', '')})"]
+          elif kind == "issue_comment":
+              issue = event.get("issue") or {}
+              body = (event.get("comment") or {}).get("body", "").replace("\n", " ")[:300]
+              lines += [f"Issue #{issue.get('number', '?')}: [{issue.get('title', '(untitled)')}]({issue.get('html_url', '')})", f"Comment: {body}"]
+          elif kind == "workflow_run":
+              workflow = event.get("workflow_run") or {}
+              commit = workflow.get("head_commit") or {}
+              message = (commit.get("message") or "").splitlines()[0]
+              lines += [f"Workflow: `{workflow.get('name', '(unnamed)')}` → **{workflow.get('conclusion', 'unknown')}**", f"Commit: `{(workflow.get('head_sha') or sha)[:7]}`", f"Message: {message or '(no commit message)'}"]
+          lines.append(f"[GitHub Actions run]({run_url})")
+          json.dump({"content": "\n".join(lines)}, open("/tmp/discord-payload.json", "w"))
           PY
           curl --silent --show-error \
             -H 'Content-Type: application/json' \
