@@ -52,24 +52,33 @@ jobs:
           APK=$(ls app/build/outputs/apk/foss/release/*.apk | head -1)
           cp "$APK" skyfox-release.apk
 
-          # Determine if this is a versioned release:
-          # - workflow_dispatch with non-empty input, OR
-          # - commit message starts with "release:"
+          # Determine release type from commit message:
+          #   "release:"          → auto-bump patch
+          #   "vX.Y.Z:" prefix   → use that version exactly
+          #   manual dispatch    → auto-bump patch
           COMMIT_MSG=$(git log -1 --pretty=%s)
           IS_RELEASE=false
-          if [[ -n "${{ github.event.inputs.release }}" ]] || [[ "$COMMIT_MSG" == release:* ]]; then
+          EXPLICIT_VERSION=""
+
+          if [[ "$COMMIT_MSG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+): ]]; then
+            IS_RELEASE=true
+            EXPLICIT_VERSION="${BASH_REMATCH[1]}"
+          elif [[ "$COMMIT_MSG" == release:* ]] || [[ -n "${{ github.event.inputs.release }}" ]]; then
             IS_RELEASE=true
           fi
 
           if [[ "$IS_RELEASE" == "true" ]]; then
-            VERSION=$(grep 'project.versioning' version.properties \
-              | awk -F= '{print $2}' | tr '\n' '.' | sed 's/\.\s*$//' \
-              || echo "unknown")
-            # Read version from gradle properties
-            MAJOR=$(grep 'project.versioning.major' version.properties | cut -d= -f2 | tr -d '[:space:]')
-            MINOR=$(grep 'project.versioning.minor' version.properties | cut -d= -f2 | tr -d '[:space:]')
-            PATCH=$(grep 'project.versioning.patch' version.properties | cut -d= -f2 | tr -d '[:space:]')
-            BUILD=$(grep 'project.versioning.build' version.properties | cut -d= -f2 | tr -d '[:space:]')
+            if [[ -n "$EXPLICIT_VERSION" ]]; then
+              MAJOR=$(echo "$EXPLICIT_VERSION" | cut -d. -f1)
+              MINOR=$(echo "$EXPLICIT_VERSION" | cut -d. -f2)
+              PATCH=$(echo "$EXPLICIT_VERSION" | cut -d. -f3)
+            else
+              # auto-bump patch
+              MAJOR=$(grep 'project.versioning.major' version.properties | cut -d= -f2 | tr -d '[:space:]')
+              MINOR=$(grep 'project.versioning.minor' version.properties | cut -d= -f2 | tr -d '[:space:]')
+              PATCH=$(grep 'project.versioning.patch' version.properties | cut -d= -f2 | tr -d '[:space:]')
+              PATCH=$((PATCH + 1))
+            fi
             TAG="v${MAJOR}.${MINOR}.${PATCH}"
             TITLE="SkyFox ${MAJOR}.${MINOR}.${PATCH}"
             git tag "$TAG" || true
