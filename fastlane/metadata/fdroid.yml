@@ -1,0 +1,44 @@
+Categories:
+  - Navigation
+
+License: GPL-3.0-only
+
+AuthorName: Tay März
+AuthorEmail: marztayron@gmail.com
+AuthorWebSite: https://taymaerz.de
+
+WebSite: https://skyfox.taymaerz.de
+SourceCode: https://github.com/taynotfound/skyfox
+IssueTracker: https://github.com/taynotfound/skyfox/issues
+
+AutoName: SkyFox
+
+Summary: Fast, privacy-friendly ADS-B flight tracker. No account required.
+
+Description: |-
+  SkyFox is an independent, open-source ADS-B flight tracker for Android.
+  Track live aircraft on an interactive map, search by HEX code, callsign,
+  registration, or SQUAWK, build watchlists, and inspect full plane details
+  including operator, route, and emergency squawk alerts.
+
+  No account. No tracking. No ads.
+
+  SkyFox is based on the airplanes.live Android app by d4rken
+  (https://github.com/d4rken-org/airplanes-live-app), used under GPL-3.0.
+  It uses airplanes.live data and is not affiliated with or endorsed by
+  airplanes.live.
+
+  Source code: https://github.com/taynotfound/skyfox
+
+Builds:
+  - versionName: 0.9.0
+    versionCode: 9000000
+    commit: v0.9.0
+    subdir: app
+    gradle:
+      - foss
+
+AutoUpdateMode: Version v%v
+UpdateCheckMode: Tags
+CurrentVersion: 0.9.0
+CurrentVersionCode: 9000000

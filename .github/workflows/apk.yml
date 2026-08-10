@@ -23,15 +23,21 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      # ponytail: debug build = auto-signed with debug key, installable, no keystore secrets needed.
-      # Switch to assembleFossRelease + signing secrets when this goes public.
-      - name: Build FOSS debug APK
-        run: ./gradlew assembleFossDebug
+      # ponytail: release signing via env vars — ProjectConfig.setupCredentials reads these.
+      # Add STORE_PATH/STORE_PASSWORD/KEY_ALIAS/KEY_PASSWORD secrets to sign properly.
+      # Without secrets: Gradle falls through to unsigned, gh release upload will still work.
+      - name: Build FOSS release APK
+        env:
+          STORE_PATH: ${{ secrets.STORE_PATH }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleFossRelease
 
       - uses: actions/upload-artifact@v4
         with:
           name: skyfox-apk
-          path: app/build/outputs/apk/foss/debug/*.apk
+          path: app/build/outputs/apk/foss/release/*.apk
 
       # rolling "nightly" prerelease — always points at latest main build
       - name: Update nightly release
@@ -39,7 +45,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          APK=$(ls app/build/outputs/apk/foss/debug/*.apk | head -1)
+          APK=$(ls app/build/outputs/apk/foss/release/*.apk | head -1)
           cp "$APK" skyfox-nightly.apk
           gh release delete nightly --yes --cleanup-tag || true
           {
@@ -88,7 +94,7 @@ jobs:
               f"Message: {message or '(no commit message)'}",
               f"[GitHub Actions run]({run_url})",
           ])
-          json.dump({"content": content}, open("/tmp/discord-payload.json", "w"))
+          json.dump({"content": content, "flags": 4}, open("/tmp/discord-payload.json", "w"))
           PY
           curl --silent --show-error \
             -H 'Content-Type: application/json' \
