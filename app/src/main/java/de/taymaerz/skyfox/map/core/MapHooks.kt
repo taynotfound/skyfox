@@ -322,7 +322,7 @@ internal fun WebView.setupAircraftDetailsExtraction() {
                 observerDebounceTimer = setTimeout(function() {
                     observerDebounceTimer = null;
                     sendUpdate();
-                }, 100);
+                }, 400);
             }
 
             // Hook tar1090's own refresh: push the instant the site updates the panel
@@ -332,7 +332,7 @@ internal fun WebView.setupAircraftDetailsExtraction() {
                     var _origRefreshSelected = refreshSelected;
                     refreshSelected = function() {
                         var r = _origRefreshSelected.apply(this, arguments);
-                        sendUpdate();
+                        scheduleObserverUpdate();
                         return r;
                     };
                     window._skyfoxRefreshHooked = true;
@@ -347,10 +347,10 @@ internal fun WebView.setupAircraftDetailsExtraction() {
                 childList: true, subtree: true, characterData: true
             });
 
-            // ponytail: poll is only a safety net now; refreshSelected hook does the real work
+            // ponytail: poll is only a safety net now; the refresh hook does the real work
             window._detailsPollInterval = setInterval(function() {
                 sendUpdate();
-            }, 3000);
+            }, 5000);
 
             window.androidDeselectSelectedAircraft = function() {
                 try {

@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -54,7 +55,11 @@ fun BottomNavBar(
                 style = MaterialTheme.typography.labelLarge,
             )
         }
-        NavigationBar {
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f))
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            tonalElevation = 0.dp,
+        ) {
             NavigationBarItem(
                 selected = destination is DestinationMap,
                 onClick = { if (destination !is DestinationMap) navController.replace(DestinationMap()) },

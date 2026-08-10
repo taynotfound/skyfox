@@ -5,6 +5,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -13,6 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import de.taymaerz.skyfox.main.core.ThemeState
 
@@ -54,6 +58,13 @@ fun AplTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        shapes = Shapes(
+            small = RoundedCornerShape(8.dp),
+            medium = RoundedCornerShape(10.dp),
+            large = RoundedCornerShape(12.dp),
+            extraLarge = RoundedCornerShape(16.dp),
+        ),
+        typography = Typography(),
         content = content,
     )
 }

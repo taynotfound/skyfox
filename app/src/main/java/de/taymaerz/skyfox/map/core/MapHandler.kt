@@ -71,6 +71,7 @@ class MapHandler @AssistedInject constructor(
         override fun onAircraftDetailsChanged(jsonData: String) {
             val details = MapAircraftDetails.fromJson(jsonData)
             if (details != null) {
+                if (details == lastAircraftDetails) return
                 lastAircraftDetails = details
                 sendEvent(Event.AircraftDetailsChanged(details))
             } else {

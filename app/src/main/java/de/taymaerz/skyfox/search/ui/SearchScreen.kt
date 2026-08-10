@@ -217,6 +217,15 @@ fun SearchScreen(
                         }
                     },
                 )
+            } else {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.search_page_label)) },
+                    actions = {
+                        IconButton(onClick = onSettings) {
+                            Icon(Icons.TwoTone.Settings, contentDescription = stringResource(R.string.label_settings))
+                        }
+                    },
+                )
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
