@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Check
@@ -57,7 +58,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import de.taymaerz.skyfox.R
 import de.taymaerz.skyfox.common.chart.Sparkline
 import de.taymaerz.skyfox.common.compose.LoadingBox
-import de.taymaerz.skyfox.common.compose.BottomNavBar
 import de.taymaerz.skyfox.common.compose.Preview2
 import de.taymaerz.skyfox.common.compose.PreviewWrapper
 import de.taymaerz.skyfox.common.compose.aplContentWindowInsets
@@ -79,6 +79,7 @@ fun FeederListScreenHost(
     state?.let {
         FeederListScreen(
             state = it,
+            onBack = { vm.navUp() },
 
             onRefresh = vm::refresh,
             onAddFeeder = vm::goToAddFeeder,
@@ -96,6 +97,7 @@ fun FeederListScreenHost(
 @Composable
 fun FeederListScreen(
     state: FeederListViewModel.State,
+    onBack: () -> Unit = {},
 
     onRefresh: () -> Unit,
     onAddFeeder: () -> Unit,
@@ -130,6 +132,11 @@ fun FeederListScreen(
                 )
             } else {
                 TopAppBar(
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.AutoMirrored.TwoTone.ArrowBack, contentDescription = null)
+                        }
+                    },
                     title = {
                         Column {
                             Text(stringResource(R.string.feeder_page_label))
@@ -150,8 +157,6 @@ fun FeederListScreen(
                 )
             }
         },
-        
-        bottomBar = { BottomNavBar(destination = DestinationFeederList) },
     ) { contentPadding ->
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,

@@ -18,14 +18,14 @@ import androidx.compose.material.icons.twotone.BarChart
 import androidx.compose.material.icons.twotone.Map
 import androidx.compose.material.icons.twotone.TravelExplore
 import androidx.compose.material.icons.twotone.Visibility
-import androidx.compose.material.icons.twotone.Router
+
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.taymaerz.skyfox.R
 import de.taymaerz.skyfox.common.navigation.LocalNavigationController
 import de.taymaerz.skyfox.common.navigation.NavigationDestination
-import de.taymaerz.skyfox.feeder.ui.DestinationFeederList
+
 import de.taymaerz.skyfox.map.ui.DestinationMap
 import de.taymaerz.skyfox.search.ui.DestinationSearch
 import de.taymaerz.skyfox.stats.ui.DestinationStats
@@ -79,12 +79,7 @@ fun BottomNavBar(
                 icon = { Icon(Icons.TwoTone.BarChart, contentDescription = null) },
                 label = { Text(stringResource(R.string.stats_page_label)) },
             )
-            NavigationBarItem(
-                selected = destination is DestinationFeederList,
-                onClick = { if (destination !is DestinationFeederList) navController.replace(DestinationFeederList) },
-                icon = { Icon(Icons.TwoTone.Router, contentDescription = null) },
-                label = { Text(stringResource(R.string.feeder_page_label)) },
-            )
+
         }
     }
 }
