@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-java@v5
         with:
@@ -33,16 +35,30 @@ jobs:
 
       # rolling "nightly" prerelease — always points at latest main build
       - name: Update nightly release
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           APK=$(ls app/build/outputs/apk/foss/debug/*.apk | head -1)
           cp "$APK" skyfox-nightly.apk
           gh release delete nightly --yes --cleanup-tag || true
+          {
+            echo "### Changelog"
+            echo
+            prev_tag=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || echo "")
+            if [ -n "$prev_tag" ]; then
+              git log "${prev_tag}..${GITHUB_SHA}" --pretty=format:"* %s" --no-merges | grep -v "^* bump" || echo "* Routine updates."
+            else
+              echo "* Initial or untracked changes."
+            fi
+            echo
+            echo "### Build"
+            echo
+            echo "Automated nightly build from \`main\` (${GITHUB_SHA::7}). May be unstable."
+          } > nightly-notes.md
           gh release create nightly skyfox-nightly.apk --prerelease \
             --title "SkyFox Nightly" \
-            --notes "Automated nightly build from \`main\` (${GITHUB_SHA::7}). May be unstable."
+            --notes-file nightly-notes.md
 
       # Send a compact run log to Discord when DISCORD_WEBHOOK_URL is configured.
       - name: Notify Discord
