@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import de.taymaerz.skyfox.common.chart.MetricLineChart
 import de.taymaerz.skyfox.common.compose.BottomNavBar
+import de.taymaerz.skyfox.common.compose.aplContentWindowInsets
 import de.taymaerz.skyfox.common.navigation.NavigationEventHandler
 import de.taymaerz.skyfox.common.error.ErrorEventHandler
 import de.taymaerz.skyfox.common.planespotters.PlanespottersThumbnail
@@ -49,6 +50,7 @@ fun StatsScreen(
     val state by vm.state.collectAsState(initial = StatsViewModel.StatsState())
 
     Scaffold(
+        contentWindowInsets = aplContentWindowInsets(hasBottomNav = true),
         topBar = {
             TopAppBar(
                 title = { Text("Stats") },

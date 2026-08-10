@@ -21,7 +21,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.twotone.ArrowBack
+
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Check
 import androidx.compose.material.icons.twotone.Close
@@ -79,7 +79,7 @@ fun FeederListScreenHost(
     state?.let {
         FeederListScreen(
             state = it,
-            onBack = { vm.navUp() },
+
             onRefresh = vm::refresh,
             onAddFeeder = vm::goToAddFeeder,
             onSettings = { vm.navTo(de.taymaerz.skyfox.main.ui.settings.DestinationSettingsIndex) },
@@ -96,7 +96,7 @@ fun FeederListScreenHost(
 @Composable
 fun FeederListScreen(
     state: FeederListViewModel.State,
-    onBack: () -> Unit = {},
+
     onRefresh: () -> Unit,
     onAddFeeder: () -> Unit,
     onSettings: () -> Unit,
@@ -130,11 +130,6 @@ fun FeederListScreen(
                 )
             } else {
                 TopAppBar(
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(Icons.AutoMirrored.TwoTone.ArrowBack, contentDescription = null)
-                        }
-                    },
                     title = {
                         Column {
                             Text(stringResource(R.string.feeder_page_label))
