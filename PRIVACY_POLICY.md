@@ -6,13 +6,15 @@ title: "Privacy Policy"
 
 # Privacy Policy
 
-This is the privacy policy for the Android app "Companion for airplanes.live" by Matthias Urhahn (darken).
+This is the privacy policy for the Android app **SkyFox**, maintained by Tay März.
+
+SkyFox is based on the airplanes.live Android app by Matthias Urhahn (d4rken), used under the GPL license. SkyFox is an independent project and is not affiliated with or endorsed by airplanes.live.
 
 ## Preamble
 
-I do not collect, share or sell personal information.
+SkyFox does not collect, share or sell personal information.
 
-My underlying privacy principle is the [Golden Rule](https://en.wikipedia.org/wiki/Golden_Rule).
+Our underlying privacy principle is the [Golden Rule](https://en.wikipedia.org/wiki/Golden_Rule).
 
 ## airplanes.live
 
