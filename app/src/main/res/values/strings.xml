@@ -139,9 +139,9 @@
 
     <string name="changelog_label">Changelog</string>
     <string name="settings_acknowledgements_label">Acknowledgements</string>
-    <string name="acks_airplanes_live_desc">Thanks for making all of this possible.</string>
-    <string name="acks_planespotters_desc">Thanks for providing the aircraft images.</string>
-    <string name="acks_route_data_desc">Thanks for providing the flight route data.</string>
+    <string name="acks_airplanes_live_desc">ADS-B aircraft data provider.</string>
+    <string name="acks_planespotters_desc">Aircraft photo database.</string>
+    <string name="acks_route_data_desc">Flight data and route information.</string>
 
     <string name="welcome_body1">SkyFox — free, open-source flight tracker for Android.</string>
     <string name="welcome_body2">Aircraft data is provided by airplanes.live, a community-driven flight network with feeders around the world. SkyFox is independent and not affiliated with airplanes.live.</string>

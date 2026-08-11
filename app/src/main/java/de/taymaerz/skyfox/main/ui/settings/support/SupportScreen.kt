@@ -44,7 +44,6 @@ fun SupportScreenHost(
         onBack = { vm.navUp() },
         onDocumentation = { vm.openDocumentation() },
         onIssueTracker = { vm.openIssueTracker() },
-        onAirplanesLiveDiscord = { vm.openAirplanesLiveDiscord() },
         onStartDebugLog = { vm.startDebugLog() },
         onStopDebugLog = { vm.stopDebugLog() },
         onPrivacyPolicy = { vm.openPrivacyPolicy() },
@@ -57,7 +56,6 @@ fun SupportScreen(
     onBack: () -> Unit,
     onDocumentation: () -> Unit,
     onIssueTracker: () -> Unit,
-    onAirplanesLiveDiscord: () -> Unit,
     onStartDebugLog: () -> Unit,
     onStopDebugLog: () -> Unit,
     onPrivacyPolicy: () -> Unit,
@@ -96,15 +94,6 @@ fun SupportScreen(
                     onClick = onIssueTracker,
                 )
             }
-            item {
-                SettingsPreferenceItem(
-                    title = "airplanes.live Discord",
-                    summary = stringResource(R.string.support_airplanes_live_discord_desc),
-                    painter = painterResource(R.drawable.ic_discord_24),
-                    onClick = onAirplanesLiveDiscord,
-                )
-            }
-
             item { SettingsCategoryHeader(title = stringResource(R.string.settings_category_other_label)) }
 
             item {

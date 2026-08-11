@@ -90,6 +90,17 @@ fun AcknowledgementsScreen(
                 )
             }
 
+            item { SettingsCategoryHeader(title = "Based on") }
+
+            item {
+                SettingsPreferenceItem(
+                    title = "airplanes.live Android app",
+                    summary = "SkyFox is built on the airplanes.live app by d4rken (GPL-3.0)",
+                    icon = Icons.AutoMirrored.TwoTone.Article,
+                    onClick = { onOpenUrl("https://github.com/d4rken-org/airplanes-live-app") },
+                )
+            }
+
             item { SettingsCategoryHeader(title = stringResource(R.string.settings_licenses_label)) }
 
             item {

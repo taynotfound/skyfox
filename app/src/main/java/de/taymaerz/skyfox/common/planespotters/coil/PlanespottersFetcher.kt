@@ -37,10 +37,10 @@ class PlanespottersFetcher(
         } else {
             endpoint.getPhotosByHex(data.hex)
         }
-        log(TAG, VERBOSE) { "Got ${photos.size} photos for $data with $options, picking first. " }
+        log(TAG, VERBOSE) { "Got ${photos.size} photos for $data with $options, picking index ${data.photoIndex}." }
 
 
-        val photo = photos.firstOrNull() ?: return ImageFetchResult(
+        val photo = photos.getOrNull(data.photoIndex) ?: photos.firstOrNull() ?: return ImageFetchResult(
             image = PlanespottersImage(
                 AppCompatResources.getDrawable(options.context, R.drawable.aircraft_photo_unavailable)!!,
                 PlanespottersMeta(

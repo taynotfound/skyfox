@@ -629,7 +629,7 @@
     <string name="settings_fork_repo_label">Repository del fork</string>
     <string name="settings_upstream_discord_desc">Assistenza e chat con altri utenti di SkyFox.</string>
     <string name="settings_upstream_discord_label">Supporto SkyFox</string>
-    <string name="settings_upstream_repo_desc">SkyFox è basato sull'app Android airplanes.live (GPL-3.0).</string>
+    <string name="settings_upstream_repo_desc">SkyFox è basato sull\'app Android airplanes.live (GPL-3.0).</string>
     <string name="settings_upstream_repo_label">App Android airplanes.live</string>
     <string name="stats_page_label">Statistiche</string>
     <string name="ui_theme_color_fox_label">Fox</string>

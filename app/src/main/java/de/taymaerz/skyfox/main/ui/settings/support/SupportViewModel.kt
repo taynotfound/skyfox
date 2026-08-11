@@ -33,10 +33,6 @@ class SupportViewModel @Inject constructor(
         webpageTool.open("https://github.com/taynotfound/skyfox/issues")
     }
 
-    fun openAirplanesLiveDiscord() {
-        webpageTool.open("https://discord.gg/adsb")
-    }
-
     fun openPrivacyPolicy() {
         webpageTool.open(PrivacyPolicy.URL)
     }

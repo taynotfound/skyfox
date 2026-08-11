@@ -7,4 +7,5 @@ data class AircraftThumbnailQuery(
     val hex: AircraftHex,
     val registration: Registration? = null,
     val large: Boolean = false,
+    val photoIndex: Int = 0,
 )

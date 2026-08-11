@@ -788,13 +788,10 @@ private fun AircraftDetailsSheetContent(
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp),
             ) {
-                // Full-width photo via Planespotters API (high resolution)
-                PlanespottersThumbnail(
-                    query = AircraftThumbnailQuery(
-                        hex = details.hex,
-                        registration = details.registration,
-                        large = true,
-                    ),
+                // Swipeable photo pager — shows all available Planespotters photos
+                PlanespottersPhotoPager(
+                    hex = details.hex,
+                    registration = details.registration,
                     onImageClick = { meta -> onThumbnailClick(meta.hex) },
                     modifier = Modifier
                         .fillMaxWidth()
