@@ -32,6 +32,10 @@ Versioned releases are published as signed FOSS release APKs. Install the `.apk`
 
 **Nightly builds** (from every push to `main`) are available under the [`nightly` pre-release tag](https://github.com/taynotfound/skyfox/releases/tag/nightly). These are for testers and developers — they may be unstable.
 
+## How AI was used
+
+Claude and ChatGPT were used as development tools for brainstorming, documenting decisions, exploring UI design, improving documentation, handling repetitive coding tasks, and helping investigate issues where a second perspective helped find a fix. They did not replace source review, testing, or maintainer responsibility for the final implementation and claims.
+
 ## Build locally
 
 ```bash

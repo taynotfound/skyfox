@@ -1,7 +1,6 @@
 package de.taymaerz.skyfox.main.ui
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.taymaerz.skyfox.common.SponsorHelper
 import de.taymaerz.skyfox.common.coroutine.DispatcherProvider
 import de.taymaerz.skyfox.common.datastore.value
 import de.taymaerz.skyfox.common.debug.logging.Logging.Priority.WARN
@@ -28,7 +27,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityVM @Inject constructor(
     dispatcherProvider: DispatcherProvider,
-    private val sponsorHelper: SponsorHelper,
     private val watchRepo: WatchRepo,
     private val updateChecker: UpdateChecker,
     private val generalSettings: GeneralSettings,
@@ -63,10 +61,6 @@ class MainActivityVM @Inject constructor(
 
     fun onGo() {
         // Ready
-    }
-
-    fun goSponsor() = launch {
-        sponsorHelper.openSponsorPage()
     }
 
     fun showWatchAlert(watchId: WatchId) = launch {

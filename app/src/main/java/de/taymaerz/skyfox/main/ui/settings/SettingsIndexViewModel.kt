@@ -3,7 +3,6 @@ package de.taymaerz.skyfox.main.ui.settings
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.taymaerz.skyfox.common.PrivacyPolicy
-import de.taymaerz.skyfox.common.SponsorHelper
 import de.taymaerz.skyfox.common.WebpageTool
 import de.taymaerz.skyfox.common.coroutine.DispatcherProvider
 import de.taymaerz.skyfox.common.debug.logging.log
@@ -19,7 +18,6 @@ class SettingsIndexViewModel @Inject constructor(
     @Suppress("unused") private val handle: SavedStateHandle,
     dispatcherProvider: DispatcherProvider,
     private val webpageTool: WebpageTool,
-    private val sponsorHelper: SponsorHelper,
     updateChecker: UpdateChecker,
 ) : ViewModel4(
     dispatcherProvider = dispatcherProvider,
@@ -50,11 +48,6 @@ class SettingsIndexViewModel @Inject constructor(
 
     fun goUpstreamDiscord() {
         webpageTool.open("https://discord.gg/bGx9VetCC4")
-    }
-
-    fun goSponsor() = launch {
-        log(tag) { "goSponsor()" }
-        sponsorHelper.openSponsorPage()
     }
 
     fun goChangelog() {

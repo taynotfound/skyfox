@@ -14,7 +14,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material.icons.twotone.CellTower
 import androidx.compose.material.icons.automirrored.twotone.ContactSupport
-import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Groups
 import androidx.compose.material.icons.twotone.Map
 import androidx.compose.material.icons.twotone.NewReleases
@@ -65,7 +64,6 @@ fun SettingsIndexScreenHost(
         onFeederSettings = { vm.goFeederSettings() },
         onFeederList = { vm.goFeederList() },
         onBackupRestore = { vm.goBackupRestore() },
-        onSponsor = { vm.goSponsor() },
         onForkRepo = { vm.goForkRepo() },
         onUpstreamRepo = { vm.goUpstreamRepo() },
         onUpstreamDiscord = { vm.goUpstreamDiscord() },
@@ -87,7 +85,6 @@ fun SettingsIndexScreen(
     onFeederSettings: () -> Unit,
     onFeederList: () -> Unit = {},
     onBackupRestore: () -> Unit,
-    onSponsor: () -> Unit,
     onForkRepo: () -> Unit = {},
     onUpstreamRepo: () -> Unit = {},
     onUpstreamDiscord: () -> Unit = {},
