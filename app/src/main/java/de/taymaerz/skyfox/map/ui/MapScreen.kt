@@ -89,6 +89,7 @@ import de.taymaerz.skyfox.common.flight.Airport
 import de.taymaerz.skyfox.common.flight.FlightRoute
 import de.taymaerz.skyfox.common.compose.InfoCell
 import de.taymaerz.skyfox.common.flight.ui.HorizontalRouteBar
+import de.taymaerz.skyfox.common.planespotters.PlanespottersPhotoPager
 import de.taymaerz.skyfox.common.planespotters.PlanespottersThumbnail
 import de.taymaerz.skyfox.common.planespotters.coil.AircraftThumbnailQuery
 import de.taymaerz.skyfox.common.navigation.NavigationEventHandler
