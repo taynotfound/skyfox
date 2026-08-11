@@ -15,4 +15,4 @@ Funzionalità:
 
 I dati degli aeromobili sono forniti da airplanes.live. SkyFox è un progetto indipendente e non è affiliato ad airplanes.live.
 
-SkyFox è basato sull'app Android airplanes.live di d4rken, utilizzata sotto licenza GPL.
+SkyFox è gratuito, open source e rilasciato sotto licenza GPL-3.0.

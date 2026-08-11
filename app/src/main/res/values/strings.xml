@@ -71,12 +71,12 @@
     <string name="map_aircraft_details_owner_country_label">Country</string>
     <string name="map_aircraft_details_registration_label">Registration</string>
     <string name="settings_category_upstream_label">Original developer</string>
-    <string name="settings_upstream_repo_label">Based on airplanes.live app by d4rken (GPL)</string>
-    <string name="settings_upstream_repo_desc">Based on the airplanes.live Android app by d4rken (GPL-3.0).</string>
+    <string name="settings_upstream_repo_label">SkyFox — based on airplanes.live app (GPL)</string>
+    <string name="settings_upstream_repo_desc">SkyFox is based on the airplanes.live Android app, used under GPL-3.0.</string>
     <string name="settings_upstream_discord_label">Community Discord</string>
     <string name="settings_upstream_discord_desc">Community of the original developer</string>
     <string name="settings_fork_repo_label">This fork</string>
-    <string name="settings_fork_repo_desc">prettier-airplanes-live by Tay März</string>
+    <string name="settings_fork_repo_desc">SkyFox by Tay März</string>
 
     <string name="general_settings_label">General</string>
     <string name="general_settings_desc">General tweaks that affect the whole app.</string>

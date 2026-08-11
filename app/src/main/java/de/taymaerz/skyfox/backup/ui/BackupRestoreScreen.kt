@@ -83,7 +83,7 @@ fun BackupRestoreScreenHost(
         onCreateBackup = {
             val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm"))
             val version = BuildConfigWrap.VERSION_NAME
-            createDocumentLauncher.launch("airplanes-live_${version}_${date}.apl.zip")
+            createDocumentLauncher.launch("skyfox_${version}_${date}.apl.zip")
         },
         onRestoreBackup = {
             openDocumentLauncher.launch(arrayOf("application/zip", "application/octet-stream", "*/*"))

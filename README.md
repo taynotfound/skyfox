@@ -38,6 +38,6 @@ The APK is written to `app/build/outputs/apk/foss/debug/`.
 
 ## Credits
 
-SkyFox is based on the [airplanes.live Android app](https://github.com/d4rken-org/airplanes-live-app) by d4rken. License terms for the original project apply; see [LICENSE](LICENSE).
+SkyFox is free and open source, licensed under GPL-3.0. See [LICENSE](LICENSE).
 
 SkyFox is maintained by [Tay März](https://github.com/taynotfound).
