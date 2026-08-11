@@ -601,12 +601,12 @@
     <string name="ar_calibration_link">Guida alla calibrazione di Google</string>
 
     <string-array name="ar_ground_messages">
-        <item>🛬 Un po\u2019 basso per il traffico.</item>
+        <item>🛬 Un po&#x2019; basso per il traffico.</item>
         <item>🕳️ Nessun aereo qui sotto.</item>
         <item>👣 Aeromobile più vicino: i tuoi piedi.</item>
         <item>🐜 Personale di terra non disponibile.</item>
         <item>📡 Altitudine troppo bassa.</item>
-        <item>🧭 Prova l\u2019orizzonte, capitano.</item>
+        <item>🧭 Prova l&#x2019;orizzonte, capitano.</item>
         <item>🌍 Livello sbagliato.</item>
         <item>🚫✈️ Nessun dato di volo sotto il livello del ginocchio.</item>
     </string-array>

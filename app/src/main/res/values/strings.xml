@@ -490,7 +490,7 @@
         <item quantity="other">%d aircraft nearby</item>
     </plurals>
     <string name="ar_aircraft_capped">More aircraft nearby than can be shown</string>
-    <string name="ar_waiting_gps">Waiting for GPS\u2026</string>
+    <string name="ar_waiting_gps">Waiting for GPS&#x2026;</string>
     <string name="ar_sensor_unavailable">Orientation sensor unavailable</string>
     <string name="ar_help_action">Help</string>
     <string name="ar_calibration_title">Compass Calibration</string>

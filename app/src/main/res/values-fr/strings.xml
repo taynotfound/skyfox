@@ -552,7 +552,7 @@
     <string name="feeder_chart_no_data">Pas encore assez de données</string>
     <string name="watch_sort_mode_by_note">Par note</string>
     <string name="watch_sort_mode_by_last_seen">Par dernière observation</string>
-    <string name="watch_sort_mode_by_created">Par date d\u2019ajout</string>
+    <string name="watch_sort_mode_by_created">Par date d&#x2019;ajout</string>
 
     <string name="map_settings_hover_info_title">Afficher l\'info au survol</string>
     <string name="map_settings_hover_info_summary">Afficher les détails des aéronefs au survol des marqueurs. Utile pour les souris ou les stylets.</string>
@@ -602,11 +602,11 @@
 
     <string-array name="ar_ground_messages">
         <item>🛬 Un peu bas pour le trafic.</item>
-        <item>🕳️ Pas d\u2019avions ici en bas.</item>
+        <item>🕳️ Pas d&#x2019;avions ici en bas.</item>
         <item>👣 Aéronef le plus proche : vos pieds.</item>
         <item>🐜 Personnel au sol indisponible.</item>
         <item>📡 Altitude trop basse.</item>
-        <item>🧭 Essayez l\u2019horizon, capitaine.</item>
+        <item>🧭 Essayez l&#x2019;horizon, capitaine.</item>
         <item>🌍 Mauvaise couche.</item>
         <item>🚫✈️ Pas de données de vol en dessous du niveau des genoux.</item>
     </string-array>
