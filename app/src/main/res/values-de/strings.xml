@@ -625,13 +625,13 @@
     <string name="map_settings_home_location_lon_label">Längengrad</string>
     <string name="map_settings_home_location_summary">Wird für Entfernung und Kartenzentrierung verwendet</string>
     <string name="map_settings_home_location_title">Heimatstandort</string>
-    <string name="settings_category_upstream_label">Upstream</string>
+    <string name="settings_category_upstream_label">Basiert auf</string>
     <string name="settings_fork_repo_desc">Quellcode dieses Forks</string>
     <string name="settings_fork_repo_label">Fork-Repository</string>
-    <string name="settings_upstream_discord_desc">Community des Originalprojekts</string>
-    <string name="settings_upstream_discord_label">Upstream-Discord</string>
-    <string name="settings_upstream_repo_desc">Originales Projekt-Repository</string>
-    <string name="settings_upstream_repo_label">Upstream-Repository</string>
+    <string name="settings_upstream_discord_desc">Hilfe und Chat mit anderen SkyFox-Nutzern.</string>
+    <string name="settings_upstream_discord_label">SkyFox Support</string>
+    <string name="settings_upstream_repo_desc">SkyFox basiert auf der airplanes.live Android-App (GPL-3.0).</string>
+    <string name="settings_upstream_repo_label">airplanes.live Android-App</string>
     <string name="stats_page_label">Statistiken</string>
     <string name="ui_theme_color_fox_label">Fox</string>
 </resources>

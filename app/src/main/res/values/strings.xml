@@ -70,11 +70,11 @@
     <string name="map_aircraft_details_owner_label">Operator/Owner</string>
     <string name="map_aircraft_details_owner_country_label">Country</string>
     <string name="map_aircraft_details_registration_label">Registration</string>
-    <string name="settings_category_upstream_label">Original developer</string>
-    <string name="settings_upstream_repo_label">SkyFox — based on airplanes.live app (GPL)</string>
-    <string name="settings_upstream_repo_desc">SkyFox is based on the airplanes.live Android app, used under GPL-3.0.</string>
-    <string name="settings_upstream_discord_label">Community Discord</string>
-    <string name="settings_upstream_discord_desc">Community of the original developer</string>
+    <string name="settings_category_upstream_label">Based on</string>
+    <string name="settings_upstream_repo_label">airplanes.live Android app</string>
+    <string name="settings_upstream_repo_desc">SkyFox is built on the airplanes.live Android app, used under GPL-3.0.</string>
+    <string name="settings_upstream_discord_label">SkyFox Support</string>
+    <string name="settings_upstream_discord_desc">Get help and chat with other SkyFox users.</string>
     <string name="settings_fork_repo_label">This fork</string>
     <string name="settings_fork_repo_desc">SkyFox by Tay März</string>
 

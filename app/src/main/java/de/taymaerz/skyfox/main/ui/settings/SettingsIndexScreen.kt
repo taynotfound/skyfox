@@ -228,14 +228,6 @@ fun SettingsIndexScreen(
             }
             item {
                 SettingsPreferenceItem(
-                    title = stringResource(R.string.common_sponsor_action),
-                    summary = stringResource(R.string.common_sponsor_description),
-                    icon = Icons.TwoTone.Favorite,
-                    onClick = onSponsor,
-                )
-            }
-            item {
-                SettingsPreferenceItem(
                     title = stringResource(R.string.settings_upstream_discord_label),
                     summary = stringResource(R.string.settings_upstream_discord_desc),
                     painter = painterResource(R.drawable.ic_discord_24),
