@@ -26,7 +26,11 @@ SkyFox uses [airplanes.live](https://airplanes.live) data to show nearby aircraf
 
 ## Download
 
-The latest FOSS debug APK is attached to the [`nightly` release](https://github.com/taynotfound/skyfox/releases/tag/nightly). Every push to `main` builds and replaces that release automatically. Build status and commit details are posted to Discord.
+**[Latest release →](https://github.com/taynotfound/skyfox/releases/latest)**
+
+Versioned releases are published as signed FOSS release APKs. Install the `.apk` file — Android may ask you to allow installation from unknown sources.
+
+**Nightly builds** (from every push to `main`) are available under the [`nightly` pre-release tag](https://github.com/taynotfound/skyfox/releases/tag/nightly). These are for testers and developers — they may be unstable.
 
 ## Build locally
 

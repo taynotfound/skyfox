@@ -6,50 +6,89 @@ title: "Privacy Policy"
 
 # Privacy Policy
 
-This is the privacy policy for the Android app **SkyFox**, maintained by Tay März.
+**Product:** SkyFox  
+**Maintainer:** Tay März  
+**Last updated:** August 2026
 
-SkyFox is based on the airplanes.live Android app by Matthias Urhahn (d4rken), used under the GPL license. SkyFox is an independent project and is not affiliated with or endorsed by airplanes.live.
+SkyFox is a free and open-source Android flight tracker. It is based on the airplanes.live Android app by d4rken, used under the GPL-3.0 license. SkyFox is an independent project and is **not** affiliated with or endorsed by airplanes.live.
 
-## Preamble
+---
 
-SkyFox does not collect, share or sell personal information.
+## What SkyFox collects
 
-Our underlying privacy principle is the [Golden Rule](https://en.wikipedia.org/wiki/Golden_Rule).
+SkyFox does not collect, share, or sell personal information. No user account is required or created. SkyFox does not operate a user database and contains no advertising or behavioural tracking.
 
-## airplanes.live
+Normal app usage involves network requests to external services (described below). Those services will naturally receive your IP address as part of standard HTTP communication.
 
-Aircraft data is provided by the [airplanes.live project](https://airplanes.live).
-Their privacy policy can be found here: https://airplanes.live/privacy/
+---
 
-## planespotters.net
+## External services
 
-Aircraft related media is provided by the [planespotters.net project](https://www.planespotters.net).
-Their privacy policy can be found here: https://www.planespotters.net/legal/privacypolicy
+### airplanes.live
 
-## Permission
+Aircraft position and flight data is fetched from the [airplanes.live](https://airplanes.live) API. Your device sends requests to their servers to retrieve nearby aircraft data. Their privacy policy is at: https://airplanes.live/privacy/
+
+### Planespotters.net
+
+Aircraft photographs are loaded from [Planespotters.net](https://www.planespotters.net) when available. Their privacy policy is at: https://www.planespotters.net/legal/privacypolicy
+
+### GitHub
+
+Update checks and release information are fetched from the GitHub API (`api.github.com`). No personal data is sent.
+
+---
+
+## Android permissions
 
 ### INTERNET
 
-Internet is required to get aircraft related data from servers.
-This permission is mandatory, without internet access, the app will not work as I can't retrieve any data.
+Required to fetch aircraft data, aircraft photos, and release information from external servers. Without internet access, the app cannot retrieve live aircraft data.
 
 ### ACCESS_COARSE_LOCATION
 
-This permission allows the app to obtain a rough estimation of your current location (2-4km accuracy).
-If you grant this permission, the app can calculate and display how far an aircraft is away from you.
-Granting it is optional, but will disable some features.
+Provides a rough location estimate (2–4 km accuracy). Used to show nearby aircraft and center the map on your position. **This permission is optional.** You can decline it and pan the map manually; distance-based features will be unavailable.
+
+### ACCESS_FINE_LOCATION
+
+Provides higher-accuracy location (GPS-level). Used for the same purposes as coarse location where greater precision is desired. **This permission is optional.**
+
+### CAMERA
+
+Used by the augmented-reality (AR) view feature to overlay aircraft on the camera feed. **This permission is optional** and is only requested when you open the AR view.
 
 ### POST_NOTIFICATIONS
 
-This permission allows the app to notify you when a plane matches an alert you set up.
-Granting it is optional, but will disable some features.
+Used to deliver aircraft alerts (e.g. a watched aircraft appearing nearby, emergency squawk alerts, feeder offline notifications). **This permission is optional.** Declining it disables alert notifications.
+
+---
+
+## Local data
+
+All app data (watchlists, alerts, settings, cached aircraft data) is stored locally on your device. SkyFox does not upload this data to any server.
+
+You can export or delete local data at any time via the app settings.
+
+---
 
 ## Debug log
 
-The app has a debug log feature that can be used to assist troubleshooting efforts.
-This feature creates a log file that contains verbose output of what the app is doing.
+SkyFox includes an optional debug log feature for troubleshooting. It is manually triggered through the app settings and records verbose app activity. The log file stays on your device until you choose to share it.
 
-It is manually triggered by the user through an option in the app settings.
-The recorded log file can be shared through compatible apps (e.g. your email app) using the system's share dialog.
-As this log file may contain sensitive information (e.g. details about files or your installed applications) it should
-only be shared with trusted parties.
+**The log may contain sensitive information**, including file paths, network request details, and details about your installed applications. Only share debug logs with trusted parties (e.g. when reporting a bug).
+
+---
+
+## Analytics and advertising
+
+SkyFox contains no analytics, no advertising SDK, and no behavioural tracking of any kind.
+
+---
+
+## Contact
+
+For privacy-related questions, open an issue at:  
+https://github.com/taynotfound/skyfox/issues
+
+---
+
+*View this policy on GitHub: [PRIVACY_POLICY.md](https://github.com/taynotfound/skyfox/blob/main/PRIVACY_POLICY.md)*
