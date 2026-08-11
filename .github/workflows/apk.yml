@@ -59,6 +59,7 @@ jobs:
           COMMIT_MSG=$(git log -1 --pretty=%s)
           IS_RELEASE=false
           EXPLICIT_VERSION=""
+          IS_PRERELEASE=false
 
           if [[ "$COMMIT_MSG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9._-]+)?): ]]; then
             IS_RELEASE=true
@@ -79,13 +80,26 @@ jobs:
               PATCH=$(grep 'project.versioning.patch' version.properties | cut -d= -f2 | tr -d '[:space:]')
               PATCH=$((PATCH + 1))
             fi
+            # Every 0.x release is beta software. Keep the prerelease marker in
+            # the tag instead of publishing a misleading stable-looking 0.x.
+            if [[ "$MAJOR" == "0" && "$EXPLICIT_VERSION" != *-* ]]; then
+              EXPLICIT_VERSION="${EXPLICIT_VERSION}-beta.1"
+            fi
+            if [[ "$EXPLICIT_VERSION" == *-* || "$MAJOR" == "0" ]]; then
+              IS_PRERELEASE=true
+            fi
             TAG="v${MAJOR}.${MINOR}.${PATCH}"
+            if [[ "$EXPLICIT_VERSION" == *-* ]]; then
+              TAG="v${EXPLICIT_VERSION}"
+            fi
             TITLE="SkyFox ${MAJOR}.${MINOR}.${PATCH}"
             git tag "$TAG" || true
             git push origin "$TAG" || true
 
             # Build rich changelog from commits since last tag
-            PREV=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || echo "")
+            # Ignore the moving nightly tag. Compare against the newest semantic
+            # version tag so release notes describe the last versioned build.
+            PREV=$(git tag --merged "${GITHUB_SHA}^" --list 'v[0-9]*' --sort=-v:refname | head -1)
             {
               echo "## What's changed"
               echo
@@ -105,14 +119,16 @@ jobs:
               echo "📦 Install \`skyfox-release.apk\` below — requires Android 8.0+"
             } > notes.md
 
-            gh release create "$TAG" skyfox-release.apk \
-              --title "SkyFox $EXPLICIT_VERSION" \
-              --notes-file notes.md
+            RELEASE_ARGS=("$TAG" "skyfox-release.apk" --title "SkyFox $EXPLICIT_VERSION" --notes-file notes.md)
+            [[ "$IS_PRERELEASE" == "true" ]] && RELEASE_ARGS+=(--prerelease)
+            gh release create "${RELEASE_ARGS[@]}"
             echo "RELEASE_TYPE=release" >> "$GITHUB_ENV"
             echo "RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
           else
             gh release delete nightly --yes --cleanup-tag 2>/dev/null || true
-            PREV=$(git describe --tags --abbrev=0 "${GITHUB_SHA}^" 2>/dev/null || echo "")
+            # Ignore the moving nightly tag. Compare against the newest semantic
+            # version tag so release notes describe the last versioned build.
+            PREV=$(git tag --merged "${GITHUB_SHA}^" --list 'v[0-9]*' --sort=-v:refname | head -1)
             {
               echo "## What's changed"
               echo
@@ -152,7 +168,7 @@ jobs:
         env:
           WEBSITE_DEPLOY_KEY: ${{ secrets.WEBSITE_DEPLOY_KEY }}
         run: |
-          SRC="app/build/outputs/screenshotTest/fossDebug/record/de/taymaerz/skyfox/screenshots/PlayStoreScreenshotsKt"
+          export SRC="app/build/outputs/screenshotTest/fossDebug/record/de/taymaerz/skyfox/screenshots/PlayStoreScreenshotsKt"
           python3 - <<'PY'
           import shutil, os
           from pathlib import Path
@@ -170,6 +186,7 @@ jobs:
                   dest.parent.mkdir(parents=True, exist_ok=True)
                   shutil.copy2(png, dest)
           PY
+          mkdir -p /tmp/ws
           mkdir -p ~/.ssh
           echo "${WEBSITE_DEPLOY_KEY}" > ~/.ssh/dk && chmod 600 ~/.ssh/dk
           GIT_SSH_COMMAND="ssh -i ~/.ssh/dk -o StrictHostKeyChecking=no" \
