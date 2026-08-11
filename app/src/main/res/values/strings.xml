@@ -27,8 +27,7 @@
     <string name="common_show_on_map_action">Show on map</string>
 
     <string name="common_unavailable_label">N/A</string>
-    <string name="common_sponsor_action">Sponsor development</string>
-    <string name="common_sponsor_description">Support SkyFox development and future improvements.</string>
+
 
     <string name="common_last_seen_label">Last seen</string>
     <string name="common_registration_label">Registration</string>

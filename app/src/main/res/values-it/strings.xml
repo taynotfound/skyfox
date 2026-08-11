@@ -27,8 +27,7 @@
     <string name="common_show_on_map_action">Mostra sulla mappa</string>
 
     <string name="common_unavailable_label">N/A</string>
-    <string name="common_sponsor_action">Sponsorizza sviluppo</string>
-    <string name="common_sponsor_description">Ringrazia e incentiva lo sviluppo futuro dell\'app.</string>
+
 
     <string name="common_last_seen_label">Visto l\'ultima volta</string>
     <string name="common_registration_label">Registrazione</string>

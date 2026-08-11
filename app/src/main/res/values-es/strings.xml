@@ -27,8 +27,7 @@
     <string name="common_show_on_map_action">Mostrar en el mapa</string>
 
     <string name="common_unavailable_label">N/A</string>
-    <string name="common_sponsor_action">Patrocinar desarrollo</string>
-    <string name="common_sponsor_description">Di gracias e incentiva el desarrollo futuro de la aplicación.</string>
+
 
     <string name="common_last_seen_label">Visto por última vez</string>
     <string name="common_registration_label">Matrícula</string>
